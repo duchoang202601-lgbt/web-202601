@@ -1,0 +1,44 @@
+/* Import original CSS files */
+@import url('/css/util.min.css');
+@import url('/css/main.css');
+
+/* Additional global styles */
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Roboto-Regular', Arial, sans-serif;
+  color: #333;
+  line-height: 1.6;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+/* Fix for Next.js Link component */
+a.animsition-link {
+  cursor: pointer;
+}
+
+/* Ensure images are responsive */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Animsition fix for Next.js */
+.animsition {
+  opacity: 1 !important;
+}
+
