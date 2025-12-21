@@ -3,6 +3,8 @@ import Script from 'next/script';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ClientInit from '@/components/ClientInit';
+import BackToTop from '@/components/BackToTop';
+import FixedMenuHandler from '@/components/FixedMenuHandler';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -49,10 +51,31 @@ export default function RootLayout({
         
         {/* Google Fonts */}
         <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700;900&display=swap" rel="stylesheet" />
+        
+        {/* Critical CSS - Force page visibility for Next.js */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          .animsition { opacity: 1 !important; }
+          .animsition-loading-1 { display: none !important; }
+        `}} />
+        
+        {/* Suppress ALL console output */}
+        <script dangerouslySetInnerHTML={{ __html: `
+          (function() {
+            var noop = function() {};
+            console.log = noop;
+            console.info = noop;
+            console.warn = noop;
+            console.debug = noop;
+            console.trace = noop;
+          })();
+        `}} />
       </head>
-      <body className="animsition">
+      <body className="animsition page-loaded">
         {/* Client-side initialization */}
         <ClientInit />
+        
+        {/* Fixed menu handler */}
+        <FixedMenuHandler />
         
         {/* Header */}
         <Header />
@@ -74,21 +97,16 @@ export default function RootLayout({
         <Script src="/vendor/animsition/js/animsition.min.js" strategy="afterInteractive" />
         <Script src="/vendor/bootstrap/js/popper.js" strategy="afterInteractive" />
         <Script src="/vendor/bootstrap/js/bootstrap.min.js" strategy="afterInteractive" />
+        
+        {/* Main JS */}
+        <Script src="/js/main.js" strategy="afterInteractive" />
+        <Script src="/js/homePage/homePage.js" strategy="afterInteractive" />
       </body>
     </html>
   );
 }
 
-// Back to top component
-function BackToTop() {
-  return (
-    <div className="btn-back-to-top" id="myBtn">
-      <span className="symbol-btn-back-to-top">
-        <span className="fas fa-angle-up"></span>
-      </span>
-    </div>
-  );
-}
+// Back to top component is now imported from @/components/BackToTop
 
 // Video modal component
 function VideoModal() {

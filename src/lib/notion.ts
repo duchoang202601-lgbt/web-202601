@@ -206,7 +206,6 @@ export async function getDatabase(databaseId: string): Promise<GetDatabaseRespon
     });
     return response;
   } catch (error) {
-    console.error('Error fetching database:', error);
     throw error;
   }
 }
@@ -240,7 +239,6 @@ export async function queryDatabase(
     });
     return response;
   } catch (error) {
-    console.error('Error querying database:', error);
     throw error;
   }
 }
@@ -286,7 +284,6 @@ export async function getPage(pageId: string): Promise<GetPageResponse> {
     });
     return response;
   } catch (error) {
-    console.error('Error fetching page:', error);
     throw error;
   }
 }
@@ -742,7 +739,6 @@ export async function getAllArticles(options?: {
   featured?: boolean;
 }): Promise<Article[]> {
   if (!DATABASES.articles) {
-    console.warn('NOTION_DATABASE_ARTICLES_ID not configured');
     return [];
   }
 
@@ -811,7 +807,6 @@ export async function getArticleById(pageId: string): Promise<Article | null> {
     
     return article;
   } catch (error) {
-    console.error('Error fetching article:', error);
     return null;
   }
 }
@@ -876,7 +871,6 @@ export async function getArticlesByCategory(category: string, limit?: number): P
  */
 export async function getAllCategories(): Promise<Category[]> {
   if (!DATABASES.categories) {
-    console.warn('NOTION_DATABASE_CATEGORIES_ID not configured');
     return [];
   }
 
@@ -949,7 +943,6 @@ export async function getAllCategories(): Promise<Category[]> {
  */
 export async function getAllMenuItems(): Promise<MenuItem[]> {
   if (!DATABASES.menu) {
-    console.warn('NOTION_DATABASE_MENU_ID not configured');
     return [];
   }
 

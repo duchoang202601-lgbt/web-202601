@@ -41,7 +41,6 @@ export async function GET(
       data: article,
     });
   } catch (error) {
-    console.error('Error fetching article:', error);
     return NextResponse.json(
       { 
         success: false, 

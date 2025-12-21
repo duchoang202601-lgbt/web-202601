@@ -9,21 +9,18 @@ export default function ArticlesPage() {
   return (
     <>
       {/* Breadcrumb */}
-      <div className="container">
+      <div className="container search-container">
         <div className="headline bg0 flex-wr-sb-c p-rl-20 p-tb-8">
           <div className="f2-s-1 p-r-30 m-tb-6">
             <Link href="/" className="breadcrumb-item f1-s-3 cl9">
               Trang chủ
             </Link>
-            <a href="#" className="breadcrumb-item f1-s-3 cl9">
-              Bài viết
-            </a>
             <span className="breadcrumb-item f1-s-3 cl9">
-              Vĩnh biệt Thầy thuốc Nhân dân, Giáo sư, Bác sỹ Hoàng Bảo Châu - Cây đại thụ ngành Đông y Việt Nam
+              Bài viết
             </span>
           </div>
 
-          <div className="pos-relative size-a-2 bo-1-rad-22 of-hidden bocl11 m-tb-6">
+          <div className="pos-relative size-a-2 bo-1-rad-22 of-hidden bocl11 m-tb-6 search-section">
             <input className="f1-s-1 cl6 plh9 s-full p-l-25 p-r-45" type="text" name="search" placeholder="Tìm kiếm" />
             <button className="flex-c-c size-a-1 ab-t-r fs-20 cl2 hov-cl10 trans-03">
               <i className="zmdi zmdi-search"></i>
@@ -202,33 +199,6 @@ export default function ArticlesPage() {
                       <li key={index} className="how-bor3 p-rl-4">
                         <a href="#" className="dis-block f1-s-10 text-uppercase cl2 hov-cl10 trans-03 p-tb-13">
                           {cat}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Archive */}
-                <div className="p-b-37">
-                  <div className="how2 how2-cl4 flex-s-c">
-                    <h3 className="f1-m-2 cl3 tab01-title">Lưu trữ</h3>
-                  </div>
-
-                  <ul className="p-t-32">
-                    {[
-                      { month: 'Tháng 7 năm 2018', count: 9 },
-                      { month: 'Tháng 6 năm 2018', count: 39 },
-                      { month: 'Tháng 5 năm 2018', count: 29 },
-                      { month: 'Tháng 4 năm 2018', count: 35 },
-                      { month: 'Tháng 3 năm 2018', count: 22 },
-                      { month: 'Tháng 2 năm 2018', count: 32 },
-                      { month: 'Tháng 1 năm 2018', count: 21 },
-                      { month: 'Tháng 12 năm 2017', count: 26 },
-                    ].map((item, index) => (
-                      <li key={index} className="p-rl-4 p-b-19">
-                        <a href="#" className="flex-wr-sb-c f1-s-10 text-uppercase cl2 hov-cl10 trans-03">
-                          <span>{item.month}</span>
-                          <span>({item.count})</span>
                         </a>
                       </li>
                     ))}

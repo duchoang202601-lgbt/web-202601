@@ -16,7 +16,6 @@ export async function GET() {
       data: categories,
     });
   } catch (error) {
-    console.error('Error fetching categories:', error);
     return NextResponse.json(
       { 
         success: false, 

@@ -51,7 +51,6 @@ export async function GET(request: NextRequest) {
       data: articles,
     });
   } catch (error) {
-    console.error('Error fetching articles:', error);
     return NextResponse.json(
       { 
         success: false, 

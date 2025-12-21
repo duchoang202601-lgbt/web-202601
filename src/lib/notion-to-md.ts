@@ -380,7 +380,6 @@ export async function getPageAsMarkdown(pageId: string): Promise<string> {
 
     return markdownParts.join('\n');
   } catch (error) {
-    console.error('Error converting page to markdown:', error);
     throw error;
   }
 }
@@ -468,7 +467,6 @@ export async function getNotionPageWithContent(pageId: string): Promise<{
       html,
     };
   } catch (error) {
-    console.error('Error getting page with content:', error);
     return null;
   }
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useAuth } from '@/lib/useAuth';
 import { useEffect, useState } from 'react';
 
 interface WeatherData {
@@ -12,7 +11,6 @@ interface WeatherData {
 }
 
 export default function Header() {
-  const { isLoggedIn, username, logout, loading } = useAuth();
   const [weatherData, setWeatherData] = useState<WeatherData>({
     location: 'Đang tải vị trí...',
     weather: 'Đang tải thời tiết...',
@@ -90,11 +88,6 @@ export default function Header() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/';
-  };
-
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
@@ -110,33 +103,14 @@ export default function Header() {
                 <span className="left-topbar-item" id="location">
                   <span>{weatherData.location}</span>
                 </span>
-                <img className="m-b-1 m-rl-8" src={weatherData.iconSrc} alt={weatherData.iconAlt} id="weather-icon" style={{ width: '20px', height: '20px' }} />
+                <img className="m-b-1" src={weatherData.iconSrc} alt={weatherData.iconAlt} id="weather-icon" style={{ width: '12px', height: '12px', marginLeft: '4px', marginRight: '4px', marginBottom: '4px' }} />
                 <span id="weather">
                   <span>{weatherData.weather}</span>
                 </span>
               </span>
 
-              {/* Show/hide based on login state */}
-              {!loading && !isLoggedIn && (
-                <>
-                  <a href="#" className="left-topbar-item">Về chúng tôi</a>
-                  <a href="#" className="left-topbar-item">Liên hệ</a>
-                </>
-              )}
-              
-              {!loading && isLoggedIn && (
-                <>
-                  <span className="left-topbar-item">
-                    Xin chào, <strong>{username}</strong>
-                  </span>
-                  <a href="#" onClick={(e) => { e.preventDefault(); handleLogout(); }} className="left-topbar-item">
-                    Đăng xuất
-                  </a>
-                </>
-              )}
-              {!loading && !isLoggedIn && (
-                <Link href="/login" className="left-topbar-item">Đăng nhập</Link>
-              )}
+              <a href="#" className="left-topbar-item">Về chúng tôi</a>
+              <a href="#" className="left-topbar-item">Liên hệ</a>
             </div>
 
             <div className="right-topbar">
@@ -187,7 +161,7 @@ export default function Header() {
                 <span className="left-topbar-item" id="location-mobile">
                   <span>{weatherData.location}</span>
                 </span>
-                <img className="m-b-1 m-rl-8" src={weatherData.iconSrc} alt={weatherData.iconAlt} id="weather-icon-mobile" style={{ width: '20px', height: '20px' }} />
+                <img className="m-b-1" src={weatherData.iconSrc} alt={weatherData.iconAlt} id="weather-icon-mobile" style={{ width: '12px', height: '12px', marginLeft: '4px', marginRight: '4px', marginBottom: '4px' }} />
                 <span id="weather-mobile">
                   <span>{weatherData.weather}</span>
                 </span>
@@ -195,26 +169,8 @@ export default function Header() {
             </li>
 
             <li className="left-topbar">
-              {!loading && !isLoggedIn && (
-                <>
-                  <a href="#" className="left-topbar-item">Về chúng tôi</a>
-                  <a href="#" className="left-topbar-item">Liên hệ</a>
-                </>
-              )}
-              
-              {!loading && isLoggedIn && (
-                <>
-                  <span className="left-topbar-item">
-                    Xin chào, <strong>{username}</strong>
-                  </span>
-                  <a href="#" onClick={(e) => { e.preventDefault(); handleLogout(); }} className="left-topbar-item">
-                    Đăng xuất
-                  </a>
-                </>
-              )}
-              {!loading && !isLoggedIn && (
-                <Link href="/login" className="left-topbar-item">Đăng nhập</Link>
-              )}
+              <a href="#" className="left-topbar-item">Về chúng tôi</a>
+              <a href="#" className="left-topbar-item">Liên hệ</a>
             </li>
 
             <li className="right-topbar">
@@ -228,36 +184,34 @@ export default function Header() {
             <MobileMenuItem title="Tin tức" href="/" subItems={[
               { title: 'Chính trị', href: '/' },
               { title: 'Kinh tế', href: '/' }
-            ]} />
+            ]} onLinkClick={() => setMobileMenuOpen(false)} />
             <MobileMenuItem title="Sức khỏe cộng đồng" href="#" subItems={[
               { title: 'Tư vấn', href: '#' },
               { title: 'Sống khỏe', href: '#' }
-            ]} />
-            <MobileMenuItem title="Văn hóa" href="/category" />
+            ]} onLinkClick={() => setMobileMenuOpen(false)} />
+            <MobileMenuItem title="Văn hóa" href="/category" onLinkClick={() => setMobileMenuOpen(false)} />
             <MobileMenuItem title="Xã hội" href="#" subItems={[
               { title: 'Tất cả', href: '#' },
               { title: 'Kinh tế', href: '#' }
-            ]} />
+            ]} onLinkClick={() => setMobileMenuOpen(false)} />
             <MobileMenuItem title="Y học cổ truyền" href="#" subItems={[
               { title: 'Tất cả', href: '#' },
               { title: 'Các bài thuốc', href: '#' }
-            ]} />
-            <MobileMenuItem title="Khoa học công nghệ" href="#" subItems={[
-              { title: 'Tất cả', href: '#' }
-            ]} />
+            ]} onLinkClick={() => setMobileMenuOpen(false)} />
+            <MobileMenuItem title="Khoa học công nghệ" href="#" onLinkClick={() => setMobileMenuOpen(false)} />
             <MobileMenuItem title="Hợp tác liên kết" href="#" subItems={[
               { title: 'Tất cả', href: '#' }
-            ]} />
+            ]} onLinkClick={() => setMobileMenuOpen(false)} />
             <MobileMenuItem title="Trao đổi" href="#" subItems={[
               { title: 'Ý kiến hội viên', href: '#' },
               { title: 'Giới thiệu', href: '#' }
-            ]} />
+            ]} onLinkClick={() => setMobileMenuOpen(false)} />
             <MobileMenuItem title="Thư viện" href="#" subItems={[
               { title: 'Thư viện ảnh', href: '#' },
               { title: 'Thư viện Video', href: '#' },
               { title: 'E-magazine', href: '#' },
               { title: 'Báo in', href: '#' }
-            ]} />
+            ]} onLinkClick={() => setMobileMenuOpen(false)} />
           </ul>
         </div>
         
@@ -282,9 +236,8 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Main Nav - Hide when logged in */}
-        {!loading && !isLoggedIn && (
-          <div className="wrap-main-nav">
+        {/* Main Nav */}
+        <div className="wrap-main-nav">
             <div className="main-nav">
               <nav className="menu-desktop">
                 <Link className="logo-stick" href="/">
@@ -297,12 +250,14 @@ export default function Header() {
                     { title: 'Kinh tế', href: '/' }
                   ]} />
                   <DesktopMegaMenuItem title="Sức khỏe cộng đồng" />
-                  <li className="mega-menu-item">
+                  <li className="no-dropdown">
                     <Link className="nowarp-text" href="/category">Văn hóa</Link>
                   </li>
                   <DesktopMegaMenuItem title="Xã hội" />
                   <DesktopMegaMenuItem title="Y học cổ truyền" />
-                  <DesktopMegaMenuItem title="Khoa học công nghệ" />
+                  <li className="no-dropdown">
+                    <Link className="nowarp-text" href="#">Khoa học công nghệ</Link>
+                  </li>
                   <DesktopMegaMenuItem title="Hợp tác liên kết" />
                   <DesktopMenuItem title="Trao đổi" href="#" subItems={[
                     { title: 'Ý kiến hội viên', href: '#' },
@@ -318,7 +273,6 @@ export default function Header() {
               </nav>
             </div>
           </div>
-        )}
       </div>
     </header>
   );
@@ -384,21 +338,30 @@ function DesktopMegaMenuItem({ title }: { title: string }) {
 }
 
 // Mobile Menu Item Component
-function MobileMenuItem({ title, href, subItems }: { 
+function MobileMenuItem({ title, href, subItems, onLinkClick }: { 
   title: string; 
   href: string; 
-  subItems?: { title: string; href: string }[] 
+  subItems?: { title: string; href: string }[];
+  onLinkClick?: () => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
+  const handleLinkClick = () => {
+    if (onLinkClick) {
+      onLinkClick();
+    }
+  };
+
   return (
     <li>
-      <Link href={href}>{title}</Link>
+      <Link href={href} onClick={handleLinkClick}>{title}</Link>
       {subItems && subItems.length > 0 && (
         <>
           <ul className="sub-menu-m" style={{ display: isOpen ? 'block' : 'none' }}>
             {subItems.map((item, index) => (
-              <li key={index}><Link href={item.href}>{item.title}</Link></li>
+              <li key={index}>
+                <Link href={item.href} onClick={handleLinkClick}>{item.title}</Link>
+              </li>
             ))}
           </ul>
           <span 

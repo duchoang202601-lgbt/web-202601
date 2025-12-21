@@ -47,7 +47,6 @@ export async function getWeatherData(): Promise<WeatherData | null> {
       isDay: data.current.is_day === 1
     };
   } catch (error) {
-    console.error('Error getting weather:', error);
     return null;
   }
 }
