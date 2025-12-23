@@ -45,7 +45,7 @@ export default async function getNotionArticles({
 
   if (subCategory) {
     filters.push({
-      property: 'subCategory',
+      property: 'subcategory',
       select: { equals: subCategory },
     })
   }
