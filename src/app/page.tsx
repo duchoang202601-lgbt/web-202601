@@ -113,10 +113,10 @@ export default function Home() {
                 {/* Tin tức Tab */}
                 <NewsTab />
 
-                {/* Kinh tế Tab */}
+                {/* Sức khỏe cộng đồng Tab */}
                 <EconomyTab />
 
-                {/* Văn hóa Tab */}
+                {/* Xã hội Tab */}
                 <CultureTab />
               </div>
             </div>
@@ -159,8 +159,8 @@ function NewsTab() {
       <div className="tab01-head how2 how2-cl1 bocl12 flex-s-c m-r-10 m-r-0-sr991 tab-section-news">
         <h3 className="f1-m-2 cl12 tab01-title">Tin tức</h3>
         <div className="tab-nav-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-          <ul className="nav nav-tabs" role="tablist">
-            <li className="nav-item">
+        <ul className="nav nav-tabs" role="tablist">
+          <li className="nav-item">
               <a 
                 className={`nav-link ${activeTab === 'tab1-1' ? 'active' : ''}`} 
                 data-toggle="tab" 
@@ -170,7 +170,7 @@ function NewsTab() {
               >
                 Tất cả
               </a>
-            </li>
+          </li>
             <li className="nav-item mobile-hidden">
               <a 
                 className={`nav-link ${activeTab === 'tab1-2' ? 'active' : ''}`} 
@@ -181,7 +181,7 @@ function NewsTab() {
               >
                 Chính trị
               </a>
-            </li>
+          </li>
             <li className="nav-item mobile-hidden">
               <a 
                 className={`nav-link ${activeTab === 'tab1-3' ? 'active' : ''}`} 
@@ -192,8 +192,8 @@ function NewsTab() {
               >
                 Kinh tế
               </a>
-            </li>
-          </ul>
+          </li>
+        </ul>
           {/* Dropdown button cho mobile */}
           <button
             className="mobile-dropdown-btn"
@@ -363,22 +363,19 @@ function EconomyTab() {
   return (
     <div className="tab01 p-b-20">
       <div className="tab01-head how2 how2-cl3 bocl12 flex-s-c m-r-10 m-r-0-sr991 tab-section-economy">
-        <h3 className="f1-m-2 cl14 tab01-title">Kinh tế</h3>
+        <h3 className="f1-m-2 cl14 tab01-title">Sức khỏe cộng đồng</h3>
         <div className="tab-nav-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-          <ul className="nav nav-tabs" role="tablist">
-            <li className="nav-item">
-              <a className="nav-link active" data-toggle="tab" href="#tab2-1" role="tab">Tất cả</a>
-            </li>
+        <ul className="nav nav-tabs" role="tablist">
+          <li className="nav-item">
+            <a className="nav-link active" data-toggle="tab" href="#tab2-1" role="tab">Tất cả</a>
+          </li>
             <li className="nav-item mobile-hidden">
-              <a className="nav-link" data-toggle="tab" href="#tab2-2" role="tab">Tài chính</a>
-            </li>
+            <a className="nav-link" data-toggle="tab" href="#tab2-2" role="tab">Tư vấn</a>
+          </li>
             <li className="nav-item mobile-hidden">
-              <a className="nav-link" data-toggle="tab" href="#tab2-3" role="tab">Tiền tệ & Thị trường</a>
-            </li>
-            <li className="nav-item mobile-hidden">
-              <a className="nav-link" data-toggle="tab" href="#tab2-4" role="tab">Doanh nghiệp</a>
-            </li>
-          </ul>
+            <a className="nav-link" data-toggle="tab" href="#tab2-3" role="tab">Sống khỏe</a>
+          </li>
+        </ul>
           {/* Dropdown button cho mobile */}
           <button
             className="mobile-dropdown-btn"
@@ -430,7 +427,7 @@ function EconomyTab() {
                   borderBottom: '1px solid #eee'
                 }}
               >
-                Tài chính
+                Tư vấn
               </a>
               <a
                 className="dropdown-item"
@@ -446,30 +443,10 @@ function EconomyTab() {
                   display: 'block',
                   padding: '10px 15px',
                   color: '#333',
-                  textDecoration: 'none',
-                  borderBottom: '1px solid #eee'
-                }}
-              >
-                Tiền tệ & Thị trường
-              </a>
-              <a
-                className="dropdown-item"
-                href="#tab2-4"
-                data-toggle="tab"
-                role="tab"
-                onClick={() => {
-                  setDropdownOpen(false);
-                  const event = new Event('click');
-                  document.querySelector('[href="#tab2-4"]')?.dispatchEvent(event);
-                }}
-                style={{
-                  display: 'block',
-                  padding: '10px 15px',
-                  color: '#333',
                   textDecoration: 'none'
                 }}
               >
-                Doanh nghiệp
+                Sống khỏe
               </a>
             </div>
           )}
@@ -526,25 +503,19 @@ function CultureTab() {
   return (
     <div className="tab01 p-b-20">
       <div className="tab01-head how2 how2-cl5 bocl12 flex-s-c m-r-10 m-r-0-sr991 tab-section-culture">
-        <h3 className="f1-m-2 cl17 tab01-title">Văn hóa</h3>
+        <h3 className="f1-m-2 cl17 tab01-title">Xã hội</h3>
         <div className="tab-nav-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-          <ul className="nav nav-tabs" role="tablist">
-            <li className="nav-item">
-              <a className="nav-link active" data-toggle="tab" href="#tab3-1" role="tab">Tất cả</a>
-            </li>
+        <ul className="nav nav-tabs" role="tablist">
+          <li className="nav-item">
+            <a className="nav-link active" data-toggle="tab" href="#tab3-1" role="tab">Tất cả</a>
+          </li>
             <li className="nav-item mobile-hidden">
-              <a className="nav-link" data-toggle="tab" href="#tab3-2" role="tab">Di sản</a>
-            </li>
+            <a className="nav-link" data-toggle="tab" href="#tab3-2" role="tab">Pháp luật</a>
+          </li>
             <li className="nav-item mobile-hidden">
-              <a className="nav-link" data-toggle="tab" href="#tab3-3" role="tab">Lễ hội</a>
-            </li>
-            <li className="nav-item mobile-hidden">
-              <a className="nav-link" data-toggle="tab" href="#tab3-4" role="tab">Nghệ thuật</a>
-            </li>
-            <li className="nav-item mobile-hidden">
-              <a className="nav-link" data-toggle="tab" href="#tab3-5" role="tab">Truyền thống</a>
-            </li>
-          </ul>
+            <a className="nav-link" data-toggle="tab" href="#tab3-3" role="tab">An ninh xã hội</a>
+          </li>
+        </ul>
           {/* Dropdown button cho mobile */}
           <button
             className="mobile-dropdown-btn"
@@ -596,7 +567,7 @@ function CultureTab() {
                   borderBottom: '1px solid #eee'
                 }}
               >
-                Di sản
+                Pháp luật
               </a>
               <a
                 className="dropdown-item"
@@ -612,50 +583,10 @@ function CultureTab() {
                   display: 'block',
                   padding: '10px 15px',
                   color: '#333',
-                  textDecoration: 'none',
-                  borderBottom: '1px solid #eee'
-                }}
-              >
-                Lễ hội
-              </a>
-              <a
-                className="dropdown-item"
-                href="#tab3-4"
-                data-toggle="tab"
-                role="tab"
-                onClick={() => {
-                  setDropdownOpen(false);
-                  const event = new Event('click');
-                  document.querySelector('[href="#tab3-4"]')?.dispatchEvent(event);
-                }}
-                style={{
-                  display: 'block',
-                  padding: '10px 15px',
-                  color: '#333',
-                  textDecoration: 'none',
-                  borderBottom: '1px solid #eee'
-                }}
-              >
-                Nghệ thuật
-              </a>
-              <a
-                className="dropdown-item"
-                href="#tab3-5"
-                data-toggle="tab"
-                role="tab"
-                onClick={() => {
-                  setDropdownOpen(false);
-                  const event = new Event('click');
-                  document.querySelector('[href="#tab3-5"]')?.dispatchEvent(event);
-                }}
-                style={{
-                  display: 'block',
-                  padding: '10px 15px',
-                  color: '#333',
                   textDecoration: 'none'
                 }}
               >
-                Truyền thống
+                An ninh xã hội
               </a>
             </div>
           )}
@@ -738,7 +669,7 @@ function Sidebar() {
       {/* Banner */}
       <div className="flex-c-s p-t-8">
         <a href="#">
-          <img className="max-w-full" src="/images/banner-02.jpg" alt="IMG" />
+          <img className="max-w-full" src="/images/banner-02.png" alt="IMG" />
         </a>
       </div>
 
@@ -898,19 +829,46 @@ function LatestPosts() {
                 </form>
               </div>
 
-              {/* Tags */}
+              {/* Text Library */}
               <div className="p-b-55">
-                <div className="how2 how2-cl4 flex-s-c m-b-30">
-                  <h3 className="f1-m-2 cl3 tab01-title">Thẻ</h3>
+                <div className="how2 how2-cl4 flex-s-c m-b-0 text-library-header">
+                  <h3 className="f1-m-2 cl3 tab01-title">THƯ VIỆN VĂN BẢN</h3>
                 </div>
 
-                <div className="flex-wr-s-s m-rl--5">
-                  {['Y học cổ truyền', 'Sức khỏe cộng đồng', 'Văn hóa', 'Chân dung nhân vật', 'Bài thuốc', 'Tin tức', 'Đông y', 'Di sản'].map((tag, index) => (
-                    <a key={index} href="#" className="flex-c-c size-h-2 bo-1-rad-20 bocl12 f1-s-1 cl8 hov-btn2 trans-03 p-rl-20 p-tb-5 m-all-5">
-                      {tag}
-                    </a>
+                <ul className="p-t-0 text-library-list">
+                  {[
+                    {
+                      title: 'Nghị quyết 282/NQ-CP',
+                      downloadUrl: '/pdf/doc-01.pdf',
+                      filename: 'doc-01.pdf'
+                    },
+                    {
+                      title: 'Quyết định về việc bổ nhiệm Phó Viện trưởng Phụ trách Viện Phát triển văn hóa và chăm sóc sức khỏe cộng đồng',
+                      downloadUrl: '/pdf/doc-02.pdf',
+                      filename: 'doc-02.pdf'
+                    },
+                    {
+                      title: 'Quyết định ban hành nội dung kiểm tra, đánh giá chất lượng bệnh viện và khảo sát hài lòng người bệnh, nhân viên y tế năm 2024 đối với bệnh viện y học cổ truyền.',
+                      downloadUrl: '/pdf/doc-03.pdf',
+                      filename: 'doc-03.pdf'
+                    }
+                  ].map((doc, index) => (
+                    <li key={index} className="text-library-item">
+                      <a href="#" className="f1-s-7 cl3 hov-cl10 trans-03" style={{ display: 'block', marginBottom: '8px' }}>
+                        {doc.title}
+                      </a>
+                      <a 
+                        href={doc.downloadUrl} 
+                        download={doc.filename}
+                        className="f1-s-6 cl10 hov-cl10 trans-03" 
+                        style={{ color: '#17b978' }}
+                      >
+                        <i className="fa fa-download" style={{ marginRight: '5px' }}></i>
+                        Tải về
+                      </a>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
             </div>
           </div>

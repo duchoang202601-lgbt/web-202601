@@ -505,3 +505,49 @@ img {
   }
 }
 
+/* Text Library Header - chữ đen, thanh dọc xanh */
+.text-library-header::before {
+  background-color: #17b978 !important;
+}
+
+.text-library-header h3 {
+  color: #333 !important;
+}
+
+/* Text Library Items - sát lại với nhau và chia từng ô */
+.text-library-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  margin-top: 0 !important;
+}
+
+.text-library-item {
+  background-color: #fff !important;
+  border: 1px solid #e5e5e5 !important;
+  border-radius: 0 !important;
+  padding: 12px 15px !important;
+  margin-bottom: 0 !important;
+  margin-top: -1px !important;
+  transition: all 0.2s ease !important;
+}
+
+.text-library-item:first-child {
+  border-top-left-radius: 4px !important;
+  border-top-right-radius: 4px !important;
+  margin-top: 0 !important;
+}
+
+.text-library-item:last-child {
+  border-bottom-left-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+}
+
+.text-library-item:hover {
+  border-color: #17b978 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  z-index: 1 !important;
+  position: relative !important;
+}
+
+

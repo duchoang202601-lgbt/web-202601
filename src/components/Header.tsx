@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface WeatherData {
   location: string;
@@ -18,74 +18,186 @@ export default function Header() {
     iconAlt: 'Day'
   });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const lastCoordsRef = useRef<{ lat: number; lon: number } | null>(null);
 
   // Weather logic
   useEffect(() => {
-    const getLocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          position => {
-            getWeatherData(position.coords.latitude, position.coords.longitude);
-          },
-          () => {
-            // Fallback: Hanoi
-            getWeatherData(21.0285, 105.8542);
-          }
-        );
-      } else {
-        getWeatherData(21.0285, 105.8542);
-      }
+    const CACHE_KEY = 'weather_cache_v1';
+    const abortController = new AbortController();
+    let cancelled = false;
+    let requestId = 0;
+
+    const safeUpdate = (updater: (prev: WeatherData) => WeatherData) => {
+      if (cancelled || abortController.signal.aborted) return;
+      setWeatherData((prev) => {
+        const next = updater(prev);
+        try {
+          const coords = lastCoordsRef.current;
+          localStorage.setItem(
+            CACHE_KEY,
+            JSON.stringify({ ts: Date.now(), data: next, coords: coords || undefined })
+          );
+        } catch {
+          // ignore cache errors
+        }
+        return next;
+      });
     };
 
-    const getWeatherData = async (lat: number, lon: number) => {
+    const setLocation = (location: string) => {
+      if (!location) return;
+      safeUpdate((prev) => ({ ...prev, location }));
+    };
+
+    const setWeather = (temp: number, isDay: boolean) => {
+      safeUpdate((prev) => ({
+        ...prev,
+        weather: `HI ${temp}° LO ${temp - 3}°`,
+        iconSrc: isDay ? '/images/icons/icon-day.svg' : '/images/icons/icon-night.png',
+        iconAlt: isDay ? 'Day' : 'Night',
+      }));
+    };
+
+    const loadCache = () => {
       try {
-        // Get location name
-        const geoResponse = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
-          { headers: { 'User-Agent': 'WeatherApp/1.0' } }
-        );
-        const geoData = await geoResponse.json();
-        
-        let locationText = 'Unknown';
-        if (geoData.address) {
-          const city = geoData.address.city || geoData.address.town || geoData.address.village || 'Unknown';
-          const country = geoData.address.country_code?.toUpperCase() || '';
-          locationText = `${city}, ${country}`;
+        const raw = localStorage.getItem(CACHE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw) as {
+          ts?: number;
+          data?: WeatherData;
+          coords?: { lat: number; lon: number };
+        };
+        if (parsed?.data) return parsed;
+      } catch {
+        // ignore cache parse errors
+      }
+      return null;
+    };
+
+    const updateFromCoords = async (lat: number, lon: number, locationHint?: string) => {
+      lastCoordsRef.current = { lat, lon };
+      const myRequestId = ++requestId;
+
+      if (locationHint) setLocation(locationHint);
+
+      const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=celsius`;
+      const geoUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+
+      // Fetch weather first (fast), then location (can be slower)
+      const weatherPromise = fetch(weatherUrl, { signal: abortController.signal })
+        .then((r) => (r.ok ? r.json() : null))
+        .catch(() => null);
+
+      const geoPromise = fetch(geoUrl, { signal: abortController.signal })
+        .then((r) => (r.ok ? r.json() : null))
+        .catch(() => null);
+
+      const weatherResult = await weatherPromise;
+      if (cancelled || abortController.signal.aborted || myRequestId !== requestId) return;
+
+      if (weatherResult?.current_weather) {
+        const temp = Math.round(weatherResult.current_weather.temperature);
+        const isDay = weatherResult.current_weather.is_day === 1;
+        setWeather(temp, isDay);
+      }
+
+      // Update location without blocking weather rendering
+      geoPromise.then((geoData) => {
+        if (cancelled || abortController.signal.aborted || myRequestId !== requestId) return;
+
+        const address = geoData?.address;
+        if (address) {
+          const city = address.city || address.town || address.village || address.state || 'Unknown';
+          const country = String(address.country_code || '').toUpperCase();
+          const locationText = country ? `${city}, ${country}` : city;
+          if (locationText && locationText !== 'Unknown') setLocation(locationText);
         }
+      });
+    };
 
-        // Get weather
-        const weatherResponse = await fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=celsius`
-        );
-        const weatherResult = await weatherResponse.json();
-
-        if (weatherResult.current_weather) {
-          const temp = Math.round(weatherResult.current_weather.temperature);
-          const isDay = weatherResult.current_weather.is_day === 1;
-          
-          setWeatherData({
-            location: locationText,
-            weather: `HI ${temp}° LO ${temp - 3}°`,
-            iconSrc: isDay ? '/images/icons/icon-day.svg' : '/images/icons/icon-night.png',
-            iconAlt: isDay ? 'Day' : 'Night'
-          });
+    const fetchIpLocation = async () => {
+      try {
+        const res = await fetch('https://ipapi.co/json/', { signal: abortController.signal });
+        if (!res.ok) return null;
+        const data = (await res.json()) as {
+          latitude?: number;
+          longitude?: number;
+          city?: string;
+          country_code?: string;
+        };
+        if (typeof data.latitude === 'number' && typeof data.longitude === 'number') {
+          const city = (data.city || '').trim();
+          const country = String(data.country_code || '').toUpperCase();
+          const hint = city && country ? `${city}, ${country}` : city || undefined;
+          return { lat: data.latitude, lon: data.longitude, hint };
         }
       } catch {
-        // Set fallback based on time
-        const hour = new Date().getHours();
-        const isDay = hour >= 6 && hour < 18;
-        setWeatherData({
-          location: 'Không thể tải vị trí',
-          weather: 'N/A',
-          iconSrc: isDay ? '/images/icons/icon-day.svg' : '/images/icons/icon-night.png',
-          iconAlt: isDay ? 'Day' : 'Night'
-        });
+        // ignore
       }
+      return null;
     };
 
-    getLocation();
-    const interval = setInterval(getLocation, 30 * 60 * 1000);
-    return () => clearInterval(interval);
+    // 1) Instant render from cache (if any)
+    const cached = loadCache();
+    if (cached?.data) {
+      setWeatherData(cached.data);
+      if (cached.coords) lastCoordsRef.current = cached.coords;
+    }
+
+    // 2) Refresh using cached coords (no permission prompt)
+    if (cached?.coords) {
+      updateFromCoords(cached.coords.lat, cached.coords.lon, cached.data?.location);
+    }
+
+    // 3) Fast fallback via IP-based location (no permission prompt)
+    fetchIpLocation().then((ip) => {
+      if (!ip || cancelled || abortController.signal.aborted) return;
+      updateFromCoords(ip.lat, ip.lon, ip.hint);
+    });
+
+    // 4) Try geolocation (may be slower due to permission prompt)
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          updateFromCoords(position.coords.latitude, position.coords.longitude);
+        },
+        () => {
+          // ignore (IP/cached fallback will handle)
+        },
+        {
+          enableHighAccuracy: false,
+          maximumAge: 10 * 60 * 1000, // allow cached position for faster result
+          timeout: 2500, // quick timeout so UI doesn't wait too long
+        }
+      );
+    }
+
+    // 5) Final fallback: Hanoi (only if we still have nothing shortly after mount)
+    const hanoiTimeout = window.setTimeout(() => {
+      if (!lastCoordsRef.current) {
+        updateFromCoords(21.0285, 105.8542, 'Hà Nội, VN');
+      }
+    }, 1200);
+
+    // Refresh periodically (reuse last coords if available)
+    const interval = window.setInterval(() => {
+      const coords = lastCoordsRef.current;
+      if (coords) {
+        updateFromCoords(coords.lat, coords.lon);
+      } else {
+        fetchIpLocation().then((ip) => {
+          if (!ip || cancelled || abortController.signal.aborted) return;
+          updateFromCoords(ip.lat, ip.lon, ip.hint);
+        });
+      }
+    }, 30 * 60 * 1000);
+
+    return () => {
+      cancelled = true;
+      abortController.abort();
+      window.clearTimeout(hanoiTimeout);
+      window.clearInterval(interval);
+    };
   }, []);
 
   const toggleMobileMenu = () => {
@@ -109,8 +221,8 @@ export default function Header() {
                 </span>
               </span>
 
-              <a href="#" className="left-topbar-item">Về chúng tôi</a>
-              <a href="#" className="left-topbar-item">Liên hệ</a>
+                  <a href="#" className="left-topbar-item">Về chúng tôi</a>
+                  <a href="#" className="left-topbar-item">Liên hệ</a>
             </div>
 
             <div className="right-topbar">
@@ -169,8 +281,8 @@ export default function Header() {
             </li>
 
             <li className="left-topbar">
-              <a href="#" className="left-topbar-item">Về chúng tôi</a>
-              <a href="#" className="left-topbar-item">Liên hệ</a>
+                  <a href="#" className="left-topbar-item">Về chúng tôi</a>
+                  <a href="#" className="left-topbar-item">Liên hệ</a>
             </li>
 
             <li className="right-topbar">
@@ -191,16 +303,17 @@ export default function Header() {
             ]} onLinkClick={() => setMobileMenuOpen(false)} />
             <MobileMenuItem title="Văn hóa" href="/category" onLinkClick={() => setMobileMenuOpen(false)} />
             <MobileMenuItem title="Xã hội" href="#" subItems={[
-              { title: 'Tất cả', href: '#' },
-              { title: 'Kinh tế', href: '#' }
+              { title: 'Pháp luật', href: '#' },
+              { title: 'An ninh xã hội', href: '#' }
             ]} onLinkClick={() => setMobileMenuOpen(false)} />
             <MobileMenuItem title="Y học cổ truyền" href="#" subItems={[
-              { title: 'Tất cả', href: '#' },
-              { title: 'Các bài thuốc', href: '#' }
+              { title: 'Các bài thuốc', href: '#' },
+              { title: 'Chân dung nhân vật', href: '#' }
             ]} onLinkClick={() => setMobileMenuOpen(false)} />
             <MobileMenuItem title="Khoa học công nghệ" href="#" onLinkClick={() => setMobileMenuOpen(false)} />
             <MobileMenuItem title="Hợp tác liên kết" href="#" subItems={[
-              { title: 'Tất cả', href: '#' }
+              { title: 'Hợp tác liên kết', href: '#' },
+              { title: 'Đào tạo', href: '#' }
             ]} onLinkClick={() => setMobileMenuOpen(false)} />
             <MobileMenuItem title="Trao đổi" href="#" subItems={[
               { title: 'Ý kiến hội viên', href: '#' },
@@ -237,7 +350,7 @@ export default function Header() {
         </div>
 
         {/* Main Nav */}
-        <div className="wrap-main-nav">
+          <div className="wrap-main-nav">
             <div className="main-nav">
               <nav className="menu-desktop">
                 <Link className="logo-stick" href="/">
@@ -249,16 +362,28 @@ export default function Header() {
                     { title: 'Chính trị', href: '/' },
                     { title: 'Kinh tế', href: '/' }
                   ]} />
-                  <DesktopMegaMenuItem title="Sức khỏe cộng đồng" />
+                  <DesktopMenuItem title="Sức khỏe cộng đồng" href="#" subItems={[
+                    { title: 'Tư vấn', href: '#' },
+                    { title: 'Sống khỏe', href: '#' }
+                  ]} />
                   <li className="no-dropdown">
                     <Link className="nowarp-text" href="/category">Văn hóa</Link>
                   </li>
-                  <DesktopMegaMenuItem title="Xã hội" />
-                  <DesktopMegaMenuItem title="Y học cổ truyền" />
+                  <DesktopMenuItem title="Xã hội" href="#" subItems={[
+                    { title: 'Pháp luật', href: '#' },
+                    { title: 'An ninh xã hội', href: '#' }
+                  ]} />
+                  <DesktopMenuItem title="Y học cổ truyền" href="#" subItems={[
+                    { title: 'Các bài thuốc', href: '#' },
+                    { title: 'Chân dung nhân vật', href: '#' }
+                  ]} />
                   <li className="no-dropdown">
                     <Link className="nowarp-text" href="#">Khoa học công nghệ</Link>
                   </li>
-                  <DesktopMegaMenuItem title="Hợp tác liên kết" />
+                  <DesktopMenuItem title="Hợp tác liên kết" href="#" subItems={[
+                    { title: 'Hợp tác liên kết', href: '#' },
+                    { title: 'Đào tạo', href: '#' }
+                  ]} />
                   <DesktopMenuItem title="Trao đổi" href="#" subItems={[
                     { title: 'Ý kiến hội viên', href: '#' },
                     { title: 'Giới thiệu', href: '#' }
@@ -294,45 +419,6 @@ function DesktopMenuItem({ title, href, subItems }: {
           ))}
         </ul>
       )}
-    </li>
-  );
-}
-
-// Desktop Mega Menu Item Component (simplified)
-function DesktopMegaMenuItem({ title }: { title: string }) {
-  return (
-    <li className="mega-menu-item">
-      <a className="nowarp-text" href="#">{title}</a>
-      <div className="sub-mega-menu">
-        <div className="nav flex-column nav-pills" role="tablist">
-          <a className="nav-link active" data-toggle="pill" href="#" role="tab">Tất cả</a>
-        </div>
-        <div className="tab-content">
-          <div className="tab-pane show active" role="tabpanel">
-            <div className="row">
-              <div className="col-3">
-                <div>
-                  <Link href="/articles" className="wrap-pic-w hov1 trans-03">
-                    <img src="/images/post-05.jpg" alt="IMG" />
-                  </Link>
-                  <div className="p-t-10">
-                    <h5 className="p-b-5">
-                      <Link href="/articles" className="f1-s-5 cl3 hov-cl10 trans-03">
-                        Trắng đêm cấp cứu nạn nhân bão YAGI
-                      </Link>
-                    </h5>
-                    <span className="cl8">
-                      <a href="#" className="f1-s-6 cl8 hov-cl10 trans-03">Kinh tế</a>
-                      <span className="f1-s-3 m-rl-3">-</span>
-                      <span className="f1-s-3">18 Tháng 2</span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </li>
   );
 }

@@ -38,8 +38,8 @@ export default function ClientInit() {
       if (animsitionEl) {
         animsitionEl.classList.add('animsition-loaded');
         (animsitionEl as HTMLElement).style.opacity = '1';
-      }
-    };
+        }
+      };
 
     // Run immediately
     hideLoadingImmediately();
@@ -77,7 +77,7 @@ export default function ClientInit() {
         // Initialize main.js functions
         if (window.initMainJS) {
           window.initMainJS();
-        }
+              }
 
       } catch (error) {
         // Error initializing scripts
