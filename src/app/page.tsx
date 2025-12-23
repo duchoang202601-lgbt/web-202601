@@ -1,10 +1,40 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import TrendingNews from '@/components/TrendingNews';
+import { getDisplayCategory } from '@/lib/categoryUtils';
+
+type FeaturedArticle = {
+  id: string;
+  title: string;
+  slug: string;
+  summary: string;
+  cover: string;
+  category: string;
+  subCategory: string;
+  createdAt: string;
+}
 
 export default function Home() {
+  const [featuredArticles, setFeaturedArticles] = useState<FeaturedArticle[]>([]);
+
+  useEffect(() => {
+    fetch('/api/featured-articles')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setFeaturedArticles(data);
+        }
+      })
+      .catch(err => console.error('Error fetching featured articles:', err));
+  }, []);
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  };
+
   return (
     <>
       {/* Headline */}
@@ -31,19 +61,22 @@ export default function Home() {
         <div className="container">
           <div className="row m-rl--1">
             <div className="col-md-6 p-rl-1 p-b-2">
-              <div className="bg-img1 size-a-3 how1 pos-relative" style={{ backgroundImage: 'url(/images/post-01.jpg)' }}>
-                <Link href="/articles" className="dis-block how1-child1 trans-03"></Link>
+              <div 
+                className="bg-img1 size-a-3 how1 pos-relative" 
+                style={{ backgroundImage: `url(${featuredArticles[0]?.cover || '/images/post-01.jpg'})` }}
+              >
+                <Link href={`/articles/${featuredArticles[0]?.slug || ''}`} className="dis-block how1-child1 trans-03"></Link>
                 <div className="flex-col-e-s s-full p-rl-25 p-tb-20">
-                  <a href="#" className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2">
-                    Sống khỏe
-                  </a>
+                  <span className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2">
+                    {getDisplayCategory(featuredArticles[0]?.category, featuredArticles[0]?.subCategory, 'Sống khỏe')}
+                  </span>
                   <h3 className="how1-child2 m-t-14 m-b-10">
-                    <Link href="/articles" className="how-txt1 size-a-6 f1-l-1 cl0 hov-cl10 trans-03">
-                      VĨNH BIỆT THẦY THUỐC NHÂN DÂN, GIÁO SƯ, BÁC SỸ HOÀNG BẢO CHÂU - CÂY ĐẠI THỤ NGÀNH ĐÔNG Y VIỆT NAM
+                    <Link href={`/articles/${featuredArticles[0]?.slug || ''}`} className="how-txt1 size-a-6 f1-l-1 cl0 hov-cl10 trans-03">
+                      {featuredArticles[0]?.title || 'Đang tải...'}
                     </Link>
                   </h3>
                   <span className="how1-child2">
-                    <span className="f1-s-3 cl11">27/11/2025</span>
+                    <span className="f1-s-3 cl11">{featuredArticles[0]?.createdAt ? formatDate(featuredArticles[0].createdAt) : ''}</span>
                   </span>
                 </div>
               </div>
@@ -52,52 +85,62 @@ export default function Home() {
             <div className="col-md-6 p-rl-1">
               <div className="row m-rl--1">
                 <div className="col-12 p-rl-1 p-b-2">
-                  <div className="bg-img1 size-a-4 how1 pos-relative" style={{ backgroundImage: 'url(/images/post-02.jpg)' }}>
-                    <a href="#" className="dis-block how1-child1 trans-03"></a>
+                  <div 
+                    className="bg-img1 size-a-4 how1 pos-relative" 
+                    style={{ backgroundImage: `url(${featuredArticles[1]?.cover || '/images/post-02.jpg'})` }}
+                  >
+                    <Link href={`/articles/${featuredArticles[1]?.slug || ''}`} className="dis-block how1-child1 trans-03"></Link>
                     <div className="flex-col-e-s s-full p-rl-25 p-tb-24">
-                      <a href="#" className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2">
-                        Tư vấn
-                      </a>
+                      <span className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2">
+                        {getDisplayCategory(featuredArticles[1]?.category, featuredArticles[1]?.subCategory, 'Tư vấn')}
+                      </span>
                       <h3 className="how1-child2 m-t-14">
-                        <a href="#" className="how-txt1 size-a-7 f1-l-2 cl0 hov-cl10 trans-03">
-                          Ấm lòng với 1000 phần quà hỗ trợ trao tặng cho bà con vùng lũ Thái Nguyên
-                        </a>
+                        <Link href={`/articles/${featuredArticles[1]?.slug || ''}`} className="how-txt1 size-a-7 f1-l-2 cl0 hov-cl10 trans-03">
+                          {featuredArticles[1]?.title || 'Đang tải...'}
+                        </Link>
                       </h3>
                     </div>
                   </div>
                 </div>
 
                 <div className="col-sm-6 p-rl-1 p-b-2">
-                  <div className="bg-img1 size-a-5 how1 pos-relative" style={{ backgroundImage: 'url(/images/post-03.jpg)' }}>
-                    <a href="#" className="dis-block how1-child1 trans-03"></a>
+                  <div 
+                    className="bg-img1 size-a-5 how1 pos-relative" 
+                    style={{ backgroundImage: `url(${featuredArticles[2]?.cover || '/images/post-03.jpg'})` }}
+                  >
+                    <Link href={`/articles/${featuredArticles[2]?.slug || ''}`} className="dis-block how1-child1 trans-03"></Link>
                     <div className="flex-col-e-s s-full p-rl-25 p-tb-20">
-                      <a href="#" className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2">
-                        Doanh nghiệp và thương hiệu
-                      </a>
+                      <span className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2">
+                        {getDisplayCategory(featuredArticles[2]?.category, featuredArticles[2]?.subCategory, 'Doanh nghiệp')}
+                      </span>
                       <h3 className="how1-child2 m-t-14">
-                        <a href="#" className="how-txt1 size-h-1 f1-m-1 cl0 hov-cl10 trans-03">
-                          Doanh nhân thời kỳ mới: &quot;Tự hào - Yêu nước - Trí tuệ - Nhân văn - Đạo đức - Hội nhập - Phát triển - Đột phá&quot;
-                        </a>
+                        <Link href={`/articles/${featuredArticles[2]?.slug || ''}`} className="how-txt1 size-h-1 f1-m-1 cl0 hov-cl10 trans-03">
+                          {featuredArticles[2]?.title || 'Đang tải...'}
+                        </Link>
                       </h3>
                     </div>
                   </div>
                 </div>
 
                 <div className="col-sm-6 p-rl-1 p-b-2">
-                  <div className="bg-img1 size-a-5 how1 pos-relative" style={{ backgroundImage: 'url(/images/post-04.jpg)' }}>
-                    <a href="#" className="dis-block how1-child1 trans-03"></a>
+                  <div 
+                    className="bg-img1 size-a-5 how1 pos-relative" 
+                    style={{ backgroundImage: `url(${featuredArticles[3]?.cover || '/images/post-04.jpg'})` }}
+                  >
+                    <Link href={`/articles/${featuredArticles[3]?.slug || ''}`} className="dis-block how1-child1 trans-03"></Link>
                     <div className="flex-col-e-s s-full p-rl-25 p-tb-20">
-                      <a href="#" className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2">
-                        Sống khỏe
-                      </a>
+                      <span className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2">
+                        {getDisplayCategory(featuredArticles[3]?.category, featuredArticles[3]?.subCategory, 'Sống khỏe')}
+                      </span>
                       <h3 className="how1-child2 m-t-14">
-                        <a href="#" className="how-txt1 size-h-1 f1-m-1 cl0 hov-cl10 trans-03">
-                          Bảo tồn và phát huy giá trị văn hóa, bản sắc của nền y học cổ truyền Việt Nam
-                        </a>
+                        <Link href={`/articles/${featuredArticles[3]?.slug || ''}`} className="how-txt1 size-h-1 f1-m-1 cl0 hov-cl10 trans-03">
+                          {featuredArticles[3]?.title || 'Đang tải...'}
+                        </Link>
                       </h3>
                     </div>
                   </div>
                 </div>
+                
               </div>
             </div>
           </div>

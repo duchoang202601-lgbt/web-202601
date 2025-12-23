@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@notionhq/client": "^5.6.0",
+    "@notionhq/client": "^2.2.15",
     "js-cookie": "^3.0.5",
     "marked": "^17.0.1",
     "next": "14.2.18",
