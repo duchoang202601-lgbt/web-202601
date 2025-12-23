@@ -3,6 +3,8 @@ import { getNotionPageWithContent } from '@/lib/notion-to-md'
 import { getCategoryName } from '@/lib/categoryUtils'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import ArticleSidebar from '@/components/ArticleSidebar'
+import CommentForm from '@/components/CommentForm'
 import '../../notion-page/notion-content.css'
 
 // Revalidate mỗi 60 giây
@@ -49,102 +51,100 @@ export default async function ArticleDetailPage({ params }: { params: { slug: st
   const subCategoryName = getCategoryName(article.subCategory)
 
   return (
-    <div className="bg0 p-t-70 p-b-55">
-      <div className="container">
-        <div className="row justify-content-center">
-          {/* Main Content */}
-          <div className="col-md-10 col-lg-8">
-            {/* Breadcrumb */}
-            <div className="p-b-20">
-              <Link href="/" className="f1-s-3 cl8 hov-cl10 trans-03">
-                Trang chủ
-              </Link>
-              <span className="f1-s-3 cl8 m-lr-5">/</span>
-              {article.category && (
-                <>
-                  <Link 
-                    href={`/category/${article.category}`} 
-                    className="f1-s-3 cl8 hov-cl10 trans-03"
-                  >
-                    {categoryName}
-                  </Link>
-                  <span className="f1-s-3 cl8 m-lr-5">/</span>
-                </>
-              )}
-              {article.subCategory && (
-                <>
-                  <Link 
-                    href={`/category/${article.category}/${article.subCategory}`} 
-                    className="f1-s-3 cl8 hov-cl10 trans-03"
-                  >
-                    {subCategoryName}
-                  </Link>
-                  <span className="f1-s-3 cl8 m-lr-5">/</span>
-                </>
-              )}
-              <span className="f1-s-3 cl6">{article.title}</span>
-            </div>
+    <>
+      {/* Breadcrumb + Search */}
+      <div className="container search-container">
+        <div className="bg0 flex-wr-sb-c p-rl-20 p-tb-8">
+          {/* Breadcrumb */}
+          <div className="f2-s-1 p-r-30 m-tb-6 flex-wr-s-c" style={{ fontSize: '13px' }}>
+            <Link 
+              href="/" 
+              className="hov-cl10 trans-03"
+              style={{ color: '#999' }}
+            >
+              Trang chủ
+            </Link>
+            <span style={{ color: '#ccc', margin: '0 12px' }}>&gt;</span>
+            {article.category && (
+              <>
+                <Link 
+                  href={`/category/${article.category}`}
+                  className="hov-cl10 trans-03"
+                  style={{ color: '#999' }}
+                >
+                  {categoryName}
+                </Link>
+                <span style={{ color: '#ccc', margin: '0 12px' }}>&gt;</span>
+              </>
+            )}
+            {article.subCategory && (
+              <>
+                <Link 
+                  href={`/category/${article.category}/${article.subCategory}`}
+                  className="hov-cl10 trans-03"
+                  style={{ color: '#999' }}
+                >
+                  {subCategoryName}
+                </Link>
+                <span style={{ color: '#ccc', margin: '0 12px' }}>&gt;</span>
+              </>
+            )}
+            <span style={{ color: '#999' }}>Bài viết</span>
+          </div>
 
-            {/* Article Header */}
-            <div className="p-b-30">
-              {/* Category Badge */}
-              <div className="p-b-15">
-                {article.subCategory ? (
-                  <Link 
-                    href={`/category/${article.category}/${article.subCategory}`}
-                    className="f1-s-2 cl0 bg-main p-lr-15 p-tb-5 bor-rad-3"
-                    style={{ backgroundColor: '#17b978', display: 'inline-block' }}
-                  >
-                    {subCategoryName}
-                  </Link>
-                ) : article.category ? (
-                  <Link 
-                    href={`/category/${article.category}`}
-                    className="f1-s-2 cl0 bg-main p-lr-15 p-tb-5 bor-rad-3"
-                    style={{ backgroundColor: '#17b978', display: 'inline-block' }}
-                  >
-                    {categoryName}
-                  </Link>
-                ) : null}
-              </div>
+          {/* Phần Tìm kiếm */}
+          <div className="pos-relative size-a-2 bo-1-rad-22 of-hidden bocl11 m-tb-6 search-section">
+            <input className="f1-s-1 cl6 plh9 s-full p-l-25 p-r-45" type="text" name="search" placeholder="Tìm kiếm" />
+            <button className="flex-c-c size-a-1 ab-t-r fs-20 cl2 hov-cl10 trans-03">
+              <i className="zmdi zmdi-search"></i>
+            </button>
+          </div>
+        </div>
+      </div>
 
-              {/* Title */}
-              <h1 className="f1-l-1 cl2 p-b-15" style={{ fontSize: '2rem', lineHeight: '1.4' }}>
-                {article.title}
-              </h1>
-
-              {/* Meta Info */}
-              <div className="flex-wr-s-c p-b-20">
-                <span className="f1-s-3 cl8 m-r-15">
-                  <i className="fa fa-calendar-o m-r-5"></i>
-                  {formatDate(article.createdAt)}
-                </span>
-                <span className="f1-s-3 cl8">
-                  <i className="fa fa-user m-r-5"></i>
-                  Viện Phát triển Văn hóa và Chăm sóc Sức khỏe Cộng đồng
-                </span>
-              </div>
-
-              {/* Summary */}
-              {article.summary && (
-                <p className="f1-s-1 cl6 p-b-20" style={{ fontStyle: 'italic', borderLeft: '3px solid #17b978', paddingLeft: '15px' }}>
-                  {article.summary}
-                </p>
-              )}
-
-              {/* Cover Image */}
-              {article.cover && (
-                <div className="wrap-pic-w p-b-30">
-                  <img 
-                    src={article.cover} 
-                    alt={article.title}
-                    style={{ width: '100%', borderRadius: '8px' }}
-                  />
+      <section className="bg0 p-b-55">
+        <div className="container">
+          <div className="row justify-content-center">
+            {/* Main Content */}
+            <div className="col-md-10 col-lg-8 p-b-30">
+              {/* Category + Article Info */}
+              <div className="p-b-20 bo-b-1 bocl11 m-b-20">
+                <div className="how2 how2-cl2 flex-s-c">
+                  <h3 className="f1-m-2 cl3 tab01-title">
+                    {article.subCategory ? (
+                      <Link href={`/category/${article.category}/${article.subCategory}`} className="cl3 hov-cl10">
+                        {subCategoryName || 'Danh mục'}
+                      </Link>
+                    ) : article.category ? (
+                      <Link href={`/category/${article.category}`} className="cl3 hov-cl10">
+                        {categoryName || 'Chuyên mục'}
+                      </Link>
+                    ) : 'Bài viết'}
+                  </h3>
                 </div>
-              )}
-            </div>
+                <div className="p-t-15">
+                  {article.category && (
+                    <>
+                      <span className="f1-s-3 cl6">Chuyên mục: </span>
+                      <Link href={`/category/${article.category}`} className="f1-s-3 cl10 hov-cl10">
+                        {categoryName}
+                      </Link>
+                    </>
+                  )}
+                  {article.subCategory && (
+                    <>
+                      <span className="f1-s-3 cl6 m-l-20">Danh mục: </span>
+                      <Link href={`/category/${article.category}/${article.subCategory}`} className="f1-s-3 cl10 hov-cl10">
+                        {subCategoryName}
+                      </Link>
+                    </>
+                  )}
+                  <span className="f1-s-3 cl6 m-l-20">Ngày đăng: </span>
+                  <span className="f1-s-3 cl3">{formatDate(article.createdAt)}</span>
+                </div>
+              </div>
 
-            {/* Article Content */}
+              {/* Article Content */}
             <div className="p-b-40">
               {pageContent?.html ? (
                 <div 
@@ -154,6 +154,14 @@ export default async function ArticleDetailPage({ params }: { params: { slug: st
               ) : (
                 <p className="f1-s-1 cl6">Nội dung đang được cập nhật...</p>
               )}
+            </div>
+
+            {/* Author */}
+            <div className="p-b-20">
+              <span className="f1-s-3 cl8">
+                <i className="fa fa-user m-r-5"></i>
+                Viện Phát triển Văn hóa và Chăm sóc Sức khỏe Cộng đồng
+              </span>
             </div>
 
             {/* Share Buttons */}
@@ -172,6 +180,9 @@ export default async function ArticleDetailPage({ params }: { params: { slug: st
               </div>
             </div>
 
+            {/* Comment Section */}
+            <CommentForm articleSlug={article.slug} />
+
             {/* Back Link */}
             <div className="p-t-30">
               <Link href="/" className="f1-s-1 cl10 hov-cl10 trans-03">
@@ -183,47 +194,15 @@ export default async function ArticleDetailPage({ params }: { params: { slug: st
 
           {/* Sidebar */}
           <div className="col-md-10 col-lg-4">
-            <div className="p-l-10 p-rl-0-sr991 p-t-70 p-t-30-sr991">
-              {/* Related Info */}
-              <div className="p-b-30">
-                <div className="how2 how2-cl4 flex-s-c m-b-20">
-                  <h3 className="f1-m-2 cl3 tab01-title">Thông tin bài viết</h3>
-                </div>
-                <ul className="p-t-10">
-                  {article.category && (
-                    <li className="p-b-10">
-                      <span className="f1-s-3 cl6">Chuyên mục: </span>
-                      <Link href={`/category/${article.category}`} className="f1-s-3 cl10 hov-cl10">
-                        {categoryName}
-                      </Link>
-                    </li>
-                  )}
-                  {article.subCategory && (
-                    <li className="p-b-10">
-                      <span className="f1-s-3 cl6">Danh mục: </span>
-                      <Link href={`/category/${article.category}/${article.subCategory}`} className="f1-s-3 cl10 hov-cl10">
-                        {subCategoryName}
-                      </Link>
-                    </li>
-                  )}
-                  <li className="p-b-10">
-                    <span className="f1-s-3 cl6">Ngày đăng: </span>
-                    <span className="f1-s-3 cl3">{formatDate(article.createdAt)}</span>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Banner */}
-              <div className="flex-c-s p-b-30">
-                <a href="#">
-                  <img className="max-w-full" src="/images/banner-02.png" alt="IMG" />
-                </a>
-              </div>
+            <div className="p-t-30-sr991">
+              {/* Article Sidebar - Popular, Subscribe, Documents */}
+              <ArticleSidebar />
             </div>
           </div>
         </div>
-      </div>
-    </div>
+        </div>
+      </section>
+    </>
   )
 }
 

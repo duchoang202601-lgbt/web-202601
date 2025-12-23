@@ -18,6 +18,7 @@ type FeaturedArticle = {
 
 export default function Home() {
   const [featuredArticles, setFeaturedArticles] = useState<FeaturedArticle[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetch('/api/featured-articles')
@@ -27,7 +28,8 @@ export default function Home() {
           setFeaturedArticles(data);
         }
       })
-      .catch(err => console.error('Error fetching featured articles:', err));
+      .catch(err => console.error('Error fetching featured articles:', err))
+      .finally(() => setIsLoading(false));
   }, []);
 
   const formatDate = (dateString: string) => {
@@ -41,9 +43,9 @@ export default function Home() {
       <div className="container search-container">
         <div className="bg0 flex-wr-sb-c p-rl-20 p-tb-8">
           {/* Phần Trending Now */}
-          <div className="f2-s-1 p-r-30 size-w-0 m-tb-6 flex-wr-s-c trending-now-section">
-            <span className="text-uppercase cl2 p-r-8">Tin nổi bật:</span>
-            <TrendingNews />
+          <div className="f2-s-1 p-r-30 m-tb-6 trending-now-section" style={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
+            <span className="text-uppercase cl2 p-r-8" style={{ whiteSpace: 'nowrap' }}>Tin nổi bật:</span>
+            <TrendingNews titles={featuredArticles.map(article => article.title)} />
           </div>
 
           {/* Phần Tìm kiếm */}
@@ -61,84 +63,100 @@ export default function Home() {
         <div className="container">
           <div className="row m-rl--1">
             <div className="col-md-6 p-rl-1 p-b-2">
-              <div 
-                className="bg-img1 size-a-3 how1 pos-relative" 
-                style={{ backgroundImage: `url(${featuredArticles[0]?.cover || '/images/post-01.jpg'})` }}
-              >
-                <Link href={`/articles/${featuredArticles[0]?.slug || ''}`} className="dis-block how1-child1 trans-03"></Link>
-                <div className="flex-col-e-s s-full p-rl-25 p-tb-20">
-                  <span className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2">
-                    {getDisplayCategory(featuredArticles[0]?.category, featuredArticles[0]?.subCategory, 'Sống khỏe')}
-                  </span>
-                  <h3 className="how1-child2 m-t-14 m-b-10">
-                    <Link href={`/articles/${featuredArticles[0]?.slug || ''}`} className="how-txt1 size-a-6 f1-l-1 cl0 hov-cl10 trans-03">
-                      {featuredArticles[0]?.title || 'Đang tải...'}
-                    </Link>
-                  </h3>
-                  <span className="how1-child2">
-                    <span className="f1-s-3 cl11">{featuredArticles[0]?.createdAt ? formatDate(featuredArticles[0].createdAt) : ''}</span>
-                  </span>
+              {isLoading ? (
+                <div className="size-a-3" style={{ backgroundColor: '#f5f5f5' }}></div>
+              ) : (
+                <div 
+                  className="bg-img1 size-a-3 how1 pos-relative" 
+                  style={{ backgroundImage: `url(${featuredArticles[0]?.cover || '/images/post-01.jpg'})` }}
+                >
+                  <Link href={`/articles/${featuredArticles[0]?.slug || ''}`} className="dis-block how1-child1 trans-03"></Link>
+                  <div className="flex-col-e-s s-full p-rl-25 p-tb-20">
+                    <span className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2">
+                      {getDisplayCategory(featuredArticles[0]?.category, featuredArticles[0]?.subCategory, 'Sống khỏe')}
+                    </span>
+                    <h3 className="how1-child2 m-t-14 m-b-10">
+                      <Link href={`/articles/${featuredArticles[0]?.slug || ''}`} className="how-txt1 size-a-6 f1-l-1 cl0 hov-cl10 trans-03">
+                        {featuredArticles[0]?.title || 'Đang tải...'}
+                      </Link>
+                    </h3>
+                    <span className="how1-child2">
+                      <span className="f1-s-3 cl11">{featuredArticles[0]?.createdAt ? formatDate(featuredArticles[0].createdAt) : ''}</span>
+                    </span>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             <div className="col-md-6 p-rl-1">
               <div className="row m-rl--1">
                 <div className="col-12 p-rl-1 p-b-2">
-                  <div 
-                    className="bg-img1 size-a-4 how1 pos-relative" 
-                    style={{ backgroundImage: `url(${featuredArticles[1]?.cover || '/images/post-02.jpg'})` }}
-                  >
-                    <Link href={`/articles/${featuredArticles[1]?.slug || ''}`} className="dis-block how1-child1 trans-03"></Link>
-                    <div className="flex-col-e-s s-full p-rl-25 p-tb-24">
-                      <span className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2">
-                        {getDisplayCategory(featuredArticles[1]?.category, featuredArticles[1]?.subCategory, 'Tư vấn')}
-                      </span>
-                      <h3 className="how1-child2 m-t-14">
-                        <Link href={`/articles/${featuredArticles[1]?.slug || ''}`} className="how-txt1 size-a-7 f1-l-2 cl0 hov-cl10 trans-03">
-                          {featuredArticles[1]?.title || 'Đang tải...'}
-                        </Link>
-                      </h3>
+                  {isLoading ? (
+                    <div className="size-a-4" style={{ backgroundColor: '#f5f5f5' }}></div>
+                  ) : (
+                    <div 
+                      className="bg-img1 size-a-4 how1 pos-relative" 
+                      style={{ backgroundImage: `url(${featuredArticles[1]?.cover || '/images/post-02.jpg'})` }}
+                    >
+                      <Link href={`/articles/${featuredArticles[1]?.slug || ''}`} className="dis-block how1-child1 trans-03"></Link>
+                      <div className="flex-col-e-s s-full p-rl-25 p-tb-24">
+                        <span className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2">
+                          {getDisplayCategory(featuredArticles[1]?.category, featuredArticles[1]?.subCategory, 'Tư vấn')}
+                        </span>
+                        <h3 className="how1-child2 m-t-14">
+                          <Link href={`/articles/${featuredArticles[1]?.slug || ''}`} className="how-txt1 size-a-7 f1-l-2 cl0 hov-cl10 trans-03">
+                            {featuredArticles[1]?.title || 'Đang tải...'}
+                          </Link>
+                        </h3>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 <div className="col-sm-6 p-rl-1 p-b-2">
-                  <div 
-                    className="bg-img1 size-a-5 how1 pos-relative" 
-                    style={{ backgroundImage: `url(${featuredArticles[2]?.cover || '/images/post-03.jpg'})` }}
-                  >
-                    <Link href={`/articles/${featuredArticles[2]?.slug || ''}`} className="dis-block how1-child1 trans-03"></Link>
-                    <div className="flex-col-e-s s-full p-rl-25 p-tb-20">
-                      <span className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2">
-                        {getDisplayCategory(featuredArticles[2]?.category, featuredArticles[2]?.subCategory, 'Doanh nghiệp')}
-                      </span>
-                      <h3 className="how1-child2 m-t-14">
-                        <Link href={`/articles/${featuredArticles[2]?.slug || ''}`} className="how-txt1 size-h-1 f1-m-1 cl0 hov-cl10 trans-03">
-                          {featuredArticles[2]?.title || 'Đang tải...'}
-                        </Link>
-                      </h3>
+                  {isLoading ? (
+                    <div className="size-a-5" style={{ backgroundColor: '#f5f5f5' }}></div>
+                  ) : (
+                    <div 
+                      className="bg-img1 size-a-5 how1 pos-relative" 
+                      style={{ backgroundImage: `url(${featuredArticles[2]?.cover || '/images/post-03.jpg'})` }}
+                    >
+                      <Link href={`/articles/${featuredArticles[2]?.slug || ''}`} className="dis-block how1-child1 trans-03"></Link>
+                      <div className="flex-col-e-s s-full p-rl-25 p-tb-20">
+                        <span className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2">
+                          {getDisplayCategory(featuredArticles[2]?.category, featuredArticles[2]?.subCategory, 'Doanh nghiệp')}
+                        </span>
+                        <h3 className="how1-child2 m-t-14">
+                          <Link href={`/articles/${featuredArticles[2]?.slug || ''}`} className="how-txt1 size-h-1 f1-m-1 cl0 hov-cl10 trans-03">
+                            {featuredArticles[2]?.title || 'Đang tải...'}
+                          </Link>
+                        </h3>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 <div className="col-sm-6 p-rl-1 p-b-2">
-                  <div 
-                    className="bg-img1 size-a-5 how1 pos-relative" 
-                    style={{ backgroundImage: `url(${featuredArticles[3]?.cover || '/images/post-04.jpg'})` }}
-                  >
-                    <Link href={`/articles/${featuredArticles[3]?.slug || ''}`} className="dis-block how1-child1 trans-03"></Link>
-                    <div className="flex-col-e-s s-full p-rl-25 p-tb-20">
-                      <span className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2">
-                        {getDisplayCategory(featuredArticles[3]?.category, featuredArticles[3]?.subCategory, 'Sống khỏe')}
-                      </span>
-                      <h3 className="how1-child2 m-t-14">
-                        <Link href={`/articles/${featuredArticles[3]?.slug || ''}`} className="how-txt1 size-h-1 f1-m-1 cl0 hov-cl10 trans-03">
-                          {featuredArticles[3]?.title || 'Đang tải...'}
-                        </Link>
-                      </h3>
+                  {isLoading ? (
+                    <div className="size-a-5" style={{ backgroundColor: '#f5f5f5' }}></div>
+                  ) : (
+                    <div 
+                      className="bg-img1 size-a-5 how1 pos-relative" 
+                      style={{ backgroundImage: `url(${featuredArticles[3]?.cover || '/images/post-04.jpg'})` }}
+                    >
+                      <Link href={`/articles/${featuredArticles[3]?.slug || ''}`} className="dis-block how1-child1 trans-03"></Link>
+                      <div className="flex-col-e-s s-full p-rl-25 p-tb-20">
+                        <span className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2">
+                          {getDisplayCategory(featuredArticles[3]?.category, featuredArticles[3]?.subCategory, 'Sống khỏe')}
+                        </span>
+                        <h3 className="how1-child2 m-t-14">
+                          <Link href={`/articles/${featuredArticles[3]?.slug || ''}`} className="how-txt1 size-h-1 f1-m-1 cl0 hov-cl10 trans-03">
+                            {featuredArticles[3]?.title || 'Đang tải...'}
+                          </Link>
+                        </h3>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
                 
               </div>
@@ -191,10 +209,60 @@ export default function Home() {
 function NewsTab() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('tab1-1');
+  const [allArticles, setAllArticles] = useState<FeaturedArticle[]>([]);
+  const [politicsArticles, setPoliticsArticles] = useState<FeaturedArticle[]>([]);
+  const [economyArticles, setEconomyArticles] = useState<FeaturedArticle[]>([]);
+  const [isLoadingAll, setIsLoadingAll] = useState(true);
+  const [isLoadingPolitics, setIsLoadingPolitics] = useState(true);
+  const [isLoadingEconomy, setIsLoadingEconomy] = useState(true);
+
+  // Fetch all articles (category: tin-tuc)
+  useEffect(() => {
+    fetch('/api/news-articles?category=tin-tuc&limit=4')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setAllArticles(data);
+        }
+      })
+      .catch(err => console.error('Error fetching all news articles:', err))
+      .finally(() => setIsLoadingAll(false));
+  }, []);
+
+  // Fetch politics articles (subCategory: chinh-tri)
+  useEffect(() => {
+    fetch('/api/news-articles?subCategory=chinh-tri&limit=4')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setPoliticsArticles(data);
+        }
+      })
+      .catch(err => console.error('Error fetching politics articles:', err))
+      .finally(() => setIsLoadingPolitics(false));
+  }, []);
+
+  // Fetch economy articles (subCategory: kinh-te)
+  useEffect(() => {
+    fetch('/api/news-articles?subCategory=kinh-te&limit=4')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setEconomyArticles(data);
+        }
+      })
+      .catch(err => console.error('Error fetching economy articles:', err))
+      .finally(() => setIsLoadingEconomy(false));
+  }, []);
 
   const handleTabClick = (e: React.MouseEvent<HTMLAnchorElement>, tabId: string) => {
     e.preventDefault();
     setActiveTab(tabId);
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
   };
 
   return (
@@ -312,87 +380,155 @@ function NewsTab() {
             </div>
           )}
         </div>
-        <a href="#" className="tab01-link f1-s-1 cl9 hov-cl10 trans-03">
+        <Link 
+          href={
+            activeTab === 'tab1-1' 
+              ? '/category/tin-tuc' 
+              : activeTab === 'tab1-2' 
+              ? '/category/tin-tuc/chinh-tri' 
+              : '/category/tin-tuc/kinh-te'
+          }
+          className="tab01-link f1-s-1 cl9 hov-cl10 trans-03"
+        >
           Xem tất cả
           <i className="fs-12 m-l-5 fa fa-caret-right"></i>
-        </a>
+        </Link>
       </div>
 
       <div className="tab-content p-t-35">
+        {/* Tab Tất cả - category: tin-tuc */}
         <div className={`tab-pane fade ${activeTab === 'tab1-1' ? 'show active' : ''}`} id="tab1-1" role="tabpanel">
-          <div className="row">
-            <div className="col-sm-6 p-r-25 p-r-15-sr991">
-              <PostItem 
-                image="/images/post-05.jpg"
-                title="Khai mạc trọng thể Hội nghị lần thứ 10 Ban Chấp hành Trung ương Đảng khóa III"
-                category="Chính trị"
-                date="18/09/2024"
-                large
-              />
+          {isLoadingAll ? (
+            <div className="row">
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <div style={{ backgroundColor: '#f5f5f5', height: '300px', borderRadius: '3px' }}></div>
+              </div>
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px', marginBottom: '20px' }}></div>
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px', marginBottom: '20px' }}></div>
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px' }}></div>
+              </div>
             </div>
-            <div className="col-sm-6 p-r-25 p-r-15-sr991">
-              <PostItemSmall 
-                image="/images/post-06.jpg"
-                title="Tân Đại sứ Trung Quốc trình Quốc thư lên Tổng Bí thư, Chủ tịch nước Tô Lâm"
-                category="Chính trị"
-                date="17/09/2024"
-              />
-              <PostItemSmall 
-                image="/images/post-07.jpg"
-                title="Năm 2025, xúc tiến thương mại tập trung thị trường tiềm năng, ngành hàng chủ lực"
-                category="Kinh tế"
-                date="15/08/2024"
-              />
-              <PostItemSmall 
-                image="/images/post-08.jpg"
-                title="4 ngân hàng nhà nước sẽ bán vàng trực tiếp cho người dân"
-                category="Kinh tế"
-                date="29/05/2024"
-              />
+          ) : allArticles.length > 0 ? (
+            <div className="row">
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <PostItem 
+                  image={allArticles[0]?.cover || '/images/post-05.jpg'}
+                  title={allArticles[0]?.title || ''}
+                  category={getDisplayCategory(allArticles[0]?.category, allArticles[0]?.subCategory, 'Tin tức')}
+                  date={allArticles[0]?.createdAt ? formatDate(allArticles[0].createdAt) : ''}
+                  slug={allArticles[0]?.slug}
+                  large
+                />
+              </div>
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                {allArticles.slice(1, 4).map((article, index) => (
+                  <PostItemSmall 
+                    key={article.id}
+                    image={article.cover || '/images/post-06.jpg'}
+                    title={article.title}
+                    category={getDisplayCategory(article.category, article.subCategory, 'Tin tức')}
+                    date={formatDate(article.createdAt)}
+                    slug={article.slug}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="p-tb-50 text-center">
+              <p className="f1-s-1 cl6">Chưa có bài viết nào.</p>
+            </div>
+          )}
         </div>
+
+        {/* Tab Chính trị - subCategory: chinh-tri */}
         <div className={`tab-pane fade ${activeTab === 'tab1-2' ? 'show active' : ''}`} id="tab1-2" role="tabpanel">
-          <div className="row">
-            <div className="col-sm-6 p-r-25 p-r-15-sr991">
-              <PostItem 
-                image="/images/post-05.jpg"
-                title="Khai mạc trọng thể Hội nghị lần thứ 10 Ban Chấp hành Trung ương Đảng khóa III"
-                category="Chính trị"
-                date="18/09/2024"
-                large
-              />
+          {isLoadingPolitics ? (
+            <div className="row">
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <div style={{ backgroundColor: '#f5f5f5', height: '300px', borderRadius: '3px' }}></div>
+              </div>
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px', marginBottom: '20px' }}></div>
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px', marginBottom: '20px' }}></div>
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px' }}></div>
+              </div>
             </div>
-            <div className="col-sm-6 p-r-25 p-r-15-sr991">
-              <PostItemSmall 
-                image="/images/post-06.jpg"
-                title="Tân Đại sứ Trung Quốc trình Quốc thư lên Tổng Bí thư, Chủ tịch nước Tô Lâm"
-                category="Chính trị"
-                date="17/09/2024"
-              />
+          ) : politicsArticles.length > 0 ? (
+            <div className="row">
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <PostItem 
+                  image={politicsArticles[0]?.cover || '/images/post-05.jpg'}
+                  title={politicsArticles[0]?.title || ''}
+                  category="Chính trị"
+                  date={politicsArticles[0]?.createdAt ? formatDate(politicsArticles[0].createdAt) : ''}
+                  slug={politicsArticles[0]?.slug}
+                  large
+                />
+              </div>
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                {politicsArticles.slice(1, 4).map((article, index) => (
+                  <PostItemSmall 
+                    key={article.id}
+                    image={article.cover || '/images/post-06.jpg'}
+                    title={article.title}
+                    category="Chính trị"
+                    date={formatDate(article.createdAt)}
+                    slug={article.slug}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="p-tb-50 text-center">
+              <p className="f1-s-1 cl6">Chưa có bài viết nào.</p>
+            </div>
+          )}
         </div>
+
+        {/* Tab Kinh tế - subCategory: kinh-te */}
         <div className={`tab-pane fade ${activeTab === 'tab1-3' ? 'show active' : ''}`} id="tab1-3" role="tabpanel">
-          <div className="row">
-            <div className="col-sm-6 p-r-25 p-r-15-sr991">
-              <PostItem 
-                image="/images/post-07.jpg"
-                title="Năm 2025, xúc tiến thương mại tập trung thị trường tiềm năng, ngành hàng chủ lực"
-                category="Kinh tế"
-                date="15/08/2024"
-                large
-              />
+          {isLoadingEconomy ? (
+            <div className="row">
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <div style={{ backgroundColor: '#f5f5f5', height: '300px', borderRadius: '3px' }}></div>
+              </div>
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px', marginBottom: '20px' }}></div>
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px', marginBottom: '20px' }}></div>
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px' }}></div>
+              </div>
             </div>
-            <div className="col-sm-6 p-r-25 p-r-15-sr991">
-              <PostItemSmall 
-                image="/images/post-08.jpg"
-                title="4 ngân hàng nhà nước sẽ bán vàng trực tiếp cho người dân"
-                category="Kinh tế"
-                date="29/05/2024"
-              />
+          ) : economyArticles.length > 0 ? (
+            <div className="row">
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <PostItem 
+                  image={economyArticles[0]?.cover || '/images/post-07.jpg'}
+                  title={economyArticles[0]?.title || ''}
+                  category="Kinh tế"
+                  date={economyArticles[0]?.createdAt ? formatDate(economyArticles[0].createdAt) : ''}
+                  slug={economyArticles[0]?.slug}
+                  large
+                />
+              </div>
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                {economyArticles.slice(1, 4).map((article, index) => (
+                  <PostItemSmall 
+                    key={article.id}
+                    image={article.cover || '/images/post-08.jpg'}
+                    title={article.title}
+                    category="Kinh tế"
+                    date={formatDate(article.createdAt)}
+                    slug={article.slug}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="p-tb-50 text-center">
+              <p className="f1-s-1 cl6">Chưa có bài viết nào.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -402,6 +538,62 @@ function NewsTab() {
 // Economy Tab Component
 function EconomyTab() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('tab2-1');
+  const [allArticles, setAllArticles] = useState<FeaturedArticle[]>([]);
+  const [tuVanArticles, setTuVanArticles] = useState<FeaturedArticle[]>([]);
+  const [songKhoeArticles, setSongKhoeArticles] = useState<FeaturedArticle[]>([]);
+  const [isLoadingAll, setIsLoadingAll] = useState(true);
+  const [isLoadingTuVan, setIsLoadingTuVan] = useState(true);
+  const [isLoadingSongKhoe, setIsLoadingSongKhoe] = useState(true);
+
+  // Fetch all articles (category: suc-khoe-cong-dong)
+  useEffect(() => {
+    fetch('/api/news-articles?category=suc-khoe-cong-dong&limit=4')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setAllArticles(data);
+        }
+      })
+      .catch(err => console.error('Error fetching all health articles:', err))
+      .finally(() => setIsLoadingAll(false));
+  }, []);
+
+  // Fetch tu-van articles (subCategory: tu-van)
+  useEffect(() => {
+    fetch('/api/news-articles?subCategory=tu-van&limit=4')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setTuVanArticles(data);
+        }
+      })
+      .catch(err => console.error('Error fetching tu-van articles:', err))
+      .finally(() => setIsLoadingTuVan(false));
+  }, []);
+
+  // Fetch song-khoe articles (subCategory: song-khoe)
+  useEffect(() => {
+    fetch('/api/news-articles?subCategory=song-khoe&limit=4')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setSongKhoeArticles(data);
+        }
+      })
+      .catch(err => console.error('Error fetching song-khoe articles:', err))
+      .finally(() => setIsLoadingSongKhoe(false));
+  }, []);
+
+  const handleTabClick = (e: React.MouseEvent<HTMLAnchorElement>, tabId: string) => {
+    e.preventDefault();
+    setActiveTab(tabId);
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  };
 
   return (
     <div className="tab01 p-b-20">
@@ -410,13 +602,37 @@ function EconomyTab() {
         <div className="tab-nav-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
         <ul className="nav nav-tabs" role="tablist">
           <li className="nav-item">
-            <a className="nav-link active" data-toggle="tab" href="#tab2-1" role="tab">Tất cả</a>
+            <a 
+              className={`nav-link ${activeTab === 'tab2-1' ? 'active' : ''}`} 
+              data-toggle="tab" 
+              href="#tab2-1" 
+              role="tab"
+              onClick={(e) => handleTabClick(e, 'tab2-1')}
+            >
+              Tất cả
+            </a>
           </li>
             <li className="nav-item mobile-hidden">
-            <a className="nav-link" data-toggle="tab" href="#tab2-2" role="tab">Tư vấn</a>
+            <a 
+              className={`nav-link ${activeTab === 'tab2-2' ? 'active' : ''}`} 
+              data-toggle="tab" 
+              href="#tab2-2" 
+              role="tab"
+              onClick={(e) => handleTabClick(e, 'tab2-2')}
+            >
+              Tư vấn
+            </a>
           </li>
             <li className="nav-item mobile-hidden">
-            <a className="nav-link" data-toggle="tab" href="#tab2-3" role="tab">Sống khỏe</a>
+            <a 
+              className={`nav-link ${activeTab === 'tab2-3' ? 'active' : ''}`} 
+              data-toggle="tab" 
+              href="#tab2-3" 
+              role="tab"
+              onClick={(e) => handleTabClick(e, 'tab2-3')}
+            >
+              Sống khỏe
+            </a>
           </li>
         </ul>
           {/* Dropdown button cho mobile */}
@@ -457,10 +673,10 @@ function EconomyTab() {
                 href="#tab2-2"
                 data-toggle="tab"
                 role="tab"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setDropdownOpen(false);
-                  const event = new Event('click');
-                  document.querySelector('[href="#tab2-2"]')?.dispatchEvent(event);
+                  setActiveTab('tab2-2');
                 }}
                 style={{
                   display: 'block',
@@ -477,10 +693,10 @@ function EconomyTab() {
                 href="#tab2-3"
                 data-toggle="tab"
                 role="tab"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setDropdownOpen(false);
-                  const event = new Event('click');
-                  document.querySelector('[href="#tab2-3"]')?.dispatchEvent(event);
+                  setActiveTab('tab2-3');
                 }}
                 style={{
                   display: 'block',
@@ -494,45 +710,155 @@ function EconomyTab() {
             </div>
           )}
         </div>
-        <a href="#" className="tab01-link f1-s-1 cl9 hov-cl10 trans-03">
+        <Link 
+          href={
+            activeTab === 'tab2-1' 
+              ? '/category/suc-khoe-cong-dong' 
+              : activeTab === 'tab2-2' 
+              ? '/category/suc-khoe-cong-dong/tu-van' 
+              : '/category/suc-khoe-cong-dong/song-khoe'
+          }
+          className="tab01-link f1-s-1 cl9 hov-cl10 trans-03"
+        >
           Xem tất cả
           <i className="fs-12 m-l-5 fa fa-caret-right"></i>
-        </a>
+        </Link>
       </div>
 
       <div className="tab-content p-t-35">
-        <div className="tab-pane fade show active" id="tab2-1" role="tabpanel">
-          <div className="row">
-            <div className="col-sm-6 p-r-25 p-r-15-sr991">
-              <PostItem 
-                image="/images/post-10.jpg"
-                title="Năm 2025, xúc tiến thương mại tập trung thị trường tiềm năng, ngành hàng chủ lực"
-                category="Tài chính"
-                date="18 Tháng 2"
-                large
-              />
+        {/* Tab Tất cả - category: suc-khoe-cong-dong */}
+        <div className={`tab-pane fade ${activeTab === 'tab2-1' ? 'show active' : ''}`} id="tab2-1" role="tabpanel">
+          {isLoadingAll ? (
+            <div className="row">
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <div style={{ backgroundColor: '#f5f5f5', height: '300px', borderRadius: '3px' }}></div>
+              </div>
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px', marginBottom: '20px' }}></div>
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px', marginBottom: '20px' }}></div>
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px' }}></div>
+              </div>
             </div>
-            <div className="col-sm-6 p-r-25 p-r-15-sr991">
-              <PostItemSmall 
-                image="/images/post-11.jpg"
-                title="Trắng đêm cấp cứu nạn nhân bão YAGI"
-                category="Small Business"
-                date="17 Tháng 2"
-              />
-              <PostItemSmall 
-                image="/images/post-12.jpg"
-                title="Trắng đêm cấp cứu nạn nhân bão YAGI"
-                category="Kinh tế"
-                date="16 Tháng 2"
-              />
-              <PostItemSmall 
-                image="/images/post-13.jpg"
-                title="Trắng đêm cấp cứu nạn nhân bão YAGI"
-                category="Tiền tệ & Thị trường"
-                date="12 Tháng 2"
-              />
+          ) : allArticles.length > 0 ? (
+            <div className="row">
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <PostItem 
+                  image={allArticles[0]?.cover || '/images/post-10.jpg'}
+                  title={allArticles[0]?.title || ''}
+                  category={getDisplayCategory(allArticles[0]?.category, allArticles[0]?.subCategory, 'Sức khỏe cộng đồng')}
+                  date={allArticles[0]?.createdAt ? formatDate(allArticles[0].createdAt) : ''}
+                  slug={allArticles[0]?.slug}
+                  large
+                />
+              </div>
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                {allArticles.slice(1, 4).map((article) => (
+                  <PostItemSmall 
+                    key={article.id}
+                    image={article.cover || '/images/post-11.jpg'}
+                    title={article.title}
+                    category={getDisplayCategory(article.category, article.subCategory, 'Sức khỏe cộng đồng')}
+                    date={formatDate(article.createdAt)}
+                    slug={article.slug}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="p-tb-50 text-center">
+              <p className="f1-s-1 cl6">Chưa có bài viết nào.</p>
+            </div>
+          )}
+        </div>
+
+        {/* Tab Tư vấn - subCategory: tu-van */}
+        <div className={`tab-pane fade ${activeTab === 'tab2-2' ? 'show active' : ''}`} id="tab2-2" role="tabpanel">
+          {isLoadingTuVan ? (
+            <div className="row">
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <div style={{ backgroundColor: '#f5f5f5', height: '300px', borderRadius: '3px' }}></div>
+              </div>
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px', marginBottom: '20px' }}></div>
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px', marginBottom: '20px' }}></div>
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px' }}></div>
+              </div>
+            </div>
+          ) : tuVanArticles.length > 0 ? (
+            <div className="row">
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <PostItem 
+                  image={tuVanArticles[0]?.cover || '/images/post-10.jpg'}
+                  title={tuVanArticles[0]?.title || ''}
+                  category="Tư vấn"
+                  date={tuVanArticles[0]?.createdAt ? formatDate(tuVanArticles[0].createdAt) : ''}
+                  slug={tuVanArticles[0]?.slug}
+                  large
+                />
+              </div>
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                {tuVanArticles.slice(1, 4).map((article) => (
+                  <PostItemSmall 
+                    key={article.id}
+                    image={article.cover || '/images/post-11.jpg'}
+                    title={article.title}
+                    category="Tư vấn"
+                    date={formatDate(article.createdAt)}
+                    slug={article.slug}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="p-tb-50 text-center">
+              <p className="f1-s-1 cl6">Chưa có bài viết nào.</p>
+            </div>
+          )}
+        </div>
+
+        {/* Tab Sống khỏe - subCategory: song-khoe */}
+        <div className={`tab-pane fade ${activeTab === 'tab2-3' ? 'show active' : ''}`} id="tab2-3" role="tabpanel">
+          {isLoadingSongKhoe ? (
+            <div className="row">
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <div style={{ backgroundColor: '#f5f5f5', height: '300px', borderRadius: '3px' }}></div>
+              </div>
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px', marginBottom: '20px' }}></div>
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px', marginBottom: '20px' }}></div>
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px' }}></div>
+              </div>
+            </div>
+          ) : songKhoeArticles.length > 0 ? (
+            <div className="row">
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <PostItem 
+                  image={songKhoeArticles[0]?.cover || '/images/post-10.jpg'}
+                  title={songKhoeArticles[0]?.title || ''}
+                  category="Sống khỏe"
+                  date={songKhoeArticles[0]?.createdAt ? formatDate(songKhoeArticles[0].createdAt) : ''}
+                  slug={songKhoeArticles[0]?.slug}
+                  large
+                />
+              </div>
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                {songKhoeArticles.slice(1, 4).map((article) => (
+                  <PostItemSmall 
+                    key={article.id}
+                    image={article.cover || '/images/post-11.jpg'}
+                    title={article.title}
+                    category="Sống khỏe"
+                    date={formatDate(article.createdAt)}
+                    slug={article.slug}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="p-tb-50 text-center">
+              <p className="f1-s-1 cl6">Chưa có bài viết nào.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -542,6 +868,62 @@ function EconomyTab() {
 // Culture Tab Component
 function CultureTab() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('tab3-1');
+  const [allArticles, setAllArticles] = useState<FeaturedArticle[]>([]);
+  const [phapLuatArticles, setPhapLuatArticles] = useState<FeaturedArticle[]>([]);
+  const [anNinhXaHoiArticles, setAnNinhXaHoiArticles] = useState<FeaturedArticle[]>([]);
+  const [isLoadingAll, setIsLoadingAll] = useState(true);
+  const [isLoadingPhapLuat, setIsLoadingPhapLuat] = useState(true);
+  const [isLoadingAnNinhXaHoi, setIsLoadingAnNinhXaHoi] = useState(true);
+
+  // Fetch all articles (category: xa-hoi)
+  useEffect(() => {
+    fetch('/api/news-articles?category=xa-hoi&limit=4')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setAllArticles(data);
+        }
+      })
+      .catch(err => console.error('Error fetching all society articles:', err))
+      .finally(() => setIsLoadingAll(false));
+  }, []);
+
+  // Fetch phap-luat articles (subCategory: phap-luat)
+  useEffect(() => {
+    fetch('/api/news-articles?subCategory=phap-luat&limit=4')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setPhapLuatArticles(data);
+        }
+      })
+      .catch(err => console.error('Error fetching phap-luat articles:', err))
+      .finally(() => setIsLoadingPhapLuat(false));
+  }, []);
+
+  // Fetch an-ninh-xa-hoi articles (subCategory: an-ninh-xa-hoi)
+  useEffect(() => {
+    fetch('/api/news-articles?subCategory=an-ninh-xa-hoi&limit=4')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setAnNinhXaHoiArticles(data);
+        }
+      })
+      .catch(err => console.error('Error fetching an-ninh-xa-hoi articles:', err))
+      .finally(() => setIsLoadingAnNinhXaHoi(false));
+  }, []);
+
+  const handleTabClick = (e: React.MouseEvent<HTMLAnchorElement>, tabId: string) => {
+    e.preventDefault();
+    setActiveTab(tabId);
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  };
 
   return (
     <div className="tab01 p-b-20">
@@ -550,13 +932,37 @@ function CultureTab() {
         <div className="tab-nav-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
         <ul className="nav nav-tabs" role="tablist">
           <li className="nav-item">
-            <a className="nav-link active" data-toggle="tab" href="#tab3-1" role="tab">Tất cả</a>
+            <a 
+              className={`nav-link ${activeTab === 'tab3-1' ? 'active' : ''}`} 
+              data-toggle="tab" 
+              href="#tab3-1" 
+              role="tab"
+              onClick={(e) => handleTabClick(e, 'tab3-1')}
+            >
+              Tất cả
+            </a>
           </li>
             <li className="nav-item mobile-hidden">
-            <a className="nav-link" data-toggle="tab" href="#tab3-2" role="tab">Pháp luật</a>
+            <a 
+              className={`nav-link ${activeTab === 'tab3-2' ? 'active' : ''}`} 
+              data-toggle="tab" 
+              href="#tab3-2" 
+              role="tab"
+              onClick={(e) => handleTabClick(e, 'tab3-2')}
+            >
+              Pháp luật
+            </a>
           </li>
             <li className="nav-item mobile-hidden">
-            <a className="nav-link" data-toggle="tab" href="#tab3-3" role="tab">An ninh xã hội</a>
+            <a 
+              className={`nav-link ${activeTab === 'tab3-3' ? 'active' : ''}`} 
+              data-toggle="tab" 
+              href="#tab3-3" 
+              role="tab"
+              onClick={(e) => handleTabClick(e, 'tab3-3')}
+            >
+              An ninh xã hội
+            </a>
           </li>
         </ul>
           {/* Dropdown button cho mobile */}
@@ -597,10 +1003,10 @@ function CultureTab() {
                 href="#tab3-2"
                 data-toggle="tab"
                 role="tab"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setDropdownOpen(false);
-                  const event = new Event('click');
-                  document.querySelector('[href="#tab3-2"]')?.dispatchEvent(event);
+                  setActiveTab('tab3-2');
                 }}
                 style={{
                   display: 'block',
@@ -617,10 +1023,10 @@ function CultureTab() {
                 href="#tab3-3"
                 data-toggle="tab"
                 role="tab"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setDropdownOpen(false);
-                  const event = new Event('click');
-                  document.querySelector('[href="#tab3-3"]')?.dispatchEvent(event);
+                  setActiveTab('tab3-3');
                 }}
                 style={{
                   display: 'block',
@@ -634,45 +1040,155 @@ function CultureTab() {
             </div>
           )}
         </div>
-        <a href="#" className="tab01-link f1-s-1 cl9 hov-cl10 trans-03">
+        <Link 
+          href={
+            activeTab === 'tab3-1' 
+              ? '/category/xa-hoi' 
+              : activeTab === 'tab3-2' 
+              ? '/category/xa-hoi/phap-luat' 
+              : '/category/xa-hoi/an-ninh-xa-hoi'
+          }
+          className="tab01-link f1-s-1 cl9 hov-cl10 trans-03"
+        >
           Xem tất cả
           <i className="fs-12 m-l-5 fa fa-caret-right"></i>
-        </a>
+        </Link>
       </div>
 
       <div className="tab-content p-t-35">
-        <div className="tab-pane fade show active" id="tab3-1" role="tabpanel">
-          <div className="row">
-            <div className="col-sm-6 p-r-25 p-r-15-sr991">
-              <PostItem 
-                image="/images/post-14.jpg"
-                title="Hai ca bệnh ghép tủy đồng loại đầu tiên tại miền Trung - Tây Nguyên xuất viện"
-                category="Di sản"
-                date="18 Tháng 2"
-                large
-              />
+        {/* Tab Tất cả - category: xa-hoi */}
+        <div className={`tab-pane fade ${activeTab === 'tab3-1' ? 'show active' : ''}`} id="tab3-1" role="tabpanel">
+          {isLoadingAll ? (
+            <div className="row">
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <div style={{ backgroundColor: '#f5f5f5', height: '300px', borderRadius: '3px' }}></div>
+              </div>
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px', marginBottom: '20px' }}></div>
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px', marginBottom: '20px' }}></div>
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px' }}></div>
+              </div>
             </div>
-            <div className="col-sm-6 p-r-25 p-r-15-sr991">
-              <PostItemSmall 
-                image="/images/post-15.jpg"
-                title="Trắng đêm cấp cứu nạn nhân bão YAGI"
-                category="Nghệ thuật"
-                date="17 Tháng 2"
-              />
-              <PostItemSmall 
-                image="/images/post-16.jpg"
-                title="Trắng đêm cấp cứu nạn nhân bão YAGI"
-                category="Lễ hội"
-                date="16 Tháng 2"
-              />
-              <PostItemSmall 
-                image="/images/post-17.jpg"
-                title="Trắng đêm cấp cứu nạn nhân bão YAGI"
-                category="Truyền thống"
-                date="12 Tháng 2"
-              />
+          ) : allArticles.length > 0 ? (
+            <div className="row">
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <PostItem 
+                  image={allArticles[0]?.cover || '/images/post-14.jpg'}
+                  title={allArticles[0]?.title || ''}
+                  category={getDisplayCategory(allArticles[0]?.category, allArticles[0]?.subCategory, 'Xã hội')}
+                  date={allArticles[0]?.createdAt ? formatDate(allArticles[0].createdAt) : ''}
+                  slug={allArticles[0]?.slug}
+                  large
+                />
+              </div>
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                {allArticles.slice(1, 4).map((article) => (
+                  <PostItemSmall 
+                    key={article.id}
+                    image={article.cover || '/images/post-15.jpg'}
+                    title={article.title}
+                    category={getDisplayCategory(article.category, article.subCategory, 'Xã hội')}
+                    date={formatDate(article.createdAt)}
+                    slug={article.slug}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="p-tb-50 text-center">
+              <p className="f1-s-1 cl6">Chưa có bài viết nào.</p>
+            </div>
+          )}
+        </div>
+
+        {/* Tab Pháp luật - subCategory: phap-luat */}
+        <div className={`tab-pane fade ${activeTab === 'tab3-2' ? 'show active' : ''}`} id="tab3-2" role="tabpanel">
+          {isLoadingPhapLuat ? (
+            <div className="row">
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <div style={{ backgroundColor: '#f5f5f5', height: '300px', borderRadius: '3px' }}></div>
+              </div>
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px', marginBottom: '20px' }}></div>
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px', marginBottom: '20px' }}></div>
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px' }}></div>
+              </div>
+            </div>
+          ) : phapLuatArticles.length > 0 ? (
+            <div className="row">
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <PostItem 
+                  image={phapLuatArticles[0]?.cover || '/images/post-14.jpg'}
+                  title={phapLuatArticles[0]?.title || ''}
+                  category="Pháp luật"
+                  date={phapLuatArticles[0]?.createdAt ? formatDate(phapLuatArticles[0].createdAt) : ''}
+                  slug={phapLuatArticles[0]?.slug}
+                  large
+                />
+              </div>
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                {phapLuatArticles.slice(1, 4).map((article) => (
+                  <PostItemSmall 
+                    key={article.id}
+                    image={article.cover || '/images/post-15.jpg'}
+                    title={article.title}
+                    category="Pháp luật"
+                    date={formatDate(article.createdAt)}
+                    slug={article.slug}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="p-tb-50 text-center">
+              <p className="f1-s-1 cl6">Chưa có bài viết nào.</p>
+            </div>
+          )}
+        </div>
+
+        {/* Tab An ninh xã hội - subCategory: an-ninh-xa-hoi */}
+        <div className={`tab-pane fade ${activeTab === 'tab3-3' ? 'show active' : ''}`} id="tab3-3" role="tabpanel">
+          {isLoadingAnNinhXaHoi ? (
+            <div className="row">
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <div style={{ backgroundColor: '#f5f5f5', height: '300px', borderRadius: '3px' }}></div>
+              </div>
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px', marginBottom: '20px' }}></div>
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px', marginBottom: '20px' }}></div>
+                <div style={{ backgroundColor: '#f5f5f5', height: '80px', borderRadius: '3px' }}></div>
+              </div>
+            </div>
+          ) : anNinhXaHoiArticles.length > 0 ? (
+            <div className="row">
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                <PostItem 
+                  image={anNinhXaHoiArticles[0]?.cover || '/images/post-14.jpg'}
+                  title={anNinhXaHoiArticles[0]?.title || ''}
+                  category="An ninh xã hội"
+                  date={anNinhXaHoiArticles[0]?.createdAt ? formatDate(anNinhXaHoiArticles[0].createdAt) : ''}
+                  slug={anNinhXaHoiArticles[0]?.slug}
+                  large
+                />
+              </div>
+              <div className="col-sm-6 p-r-25 p-r-15-sr991">
+                {anNinhXaHoiArticles.slice(1, 4).map((article) => (
+                  <PostItemSmall 
+                    key={article.id}
+                    image={article.cover || '/images/post-15.jpg'}
+                    title={article.title}
+                    category="An ninh xã hội"
+                    date={formatDate(article.createdAt)}
+                    slug={article.slug}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="p-tb-50 text-center">
+              <p className="f1-s-1 cl6">Chưa có bài viết nào.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -681,6 +1197,21 @@ function CultureTab() {
 
 // Sidebar Component
 function Sidebar() {
+  const [popularArticles, setPopularArticles] = useState<{id: string, title: string, slug: string}[]>([]);
+  const [isLoadingPopular, setIsLoadingPopular] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/highlighted-articles')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setPopularArticles(data);
+        }
+      })
+      .catch(err => console.error('Error fetching highlighted articles:', err))
+      .finally(() => setIsLoadingPopular(false));
+  }, []);
+
   return (
     <div className="p-l-10 p-rl-0-sr991 p-b-20">
       {/* Popular Posts */}
@@ -690,22 +1221,53 @@ function Sidebar() {
         </div>
 
         <ul className="p-t-35">
-          {[
-            'Vĩnh biệt Thầy thuốc Nhân dân, Giáo sư, Bác sỹ Hoàng Bảo Châu - Cây đại thụ ngành Đông y Việt Nam',
-            'Bảo tồn và phát huy giá trị văn hóa, bản sắc của nền y học cổ truyền Việt Nam',
-            'TS danh dự, cử nhân Đông y, thầy thuốc tiêu biểu toàn quốc Nguyễn Phúc Hưng: Không ngừng rèn đức, luyện tài',
-            'Chăm sóc sức khỏe cộng đồng: Nhiệm vụ không của riêng ai',
-            'Bác sĩ cảnh báo, nguy cơ đột quỵ cao trong thời tiết nắng nóng cực đoan'
-          ].map((title, index) => (
-            <li key={index} className="flex-wr-sb-s p-b-22">
-              <div className="size-a-8 flex-c-c borad-3 size-a-8 bg9 f1-m-4 cl0 m-b-6">
-                {index + 1}
-              </div>
-              <a href="#" className="size-w-3 f1-s-7 cl3 hov-cl10 trans-03">
-                {title}
-              </a>
-            </li>
-          ))}
+          {isLoadingPopular ? (
+            // Loading skeleton
+            Array.from({ length: 5 }).map((_, index) => (
+              <li key={index} className="flex-wr-sb-s p-b-22">
+                <div 
+                  style={{ 
+                    width: '32px', 
+                    height: '32px', 
+                    backgroundColor: '#eee',
+                    borderRadius: '3px',
+                    flexShrink: 0
+                  }}
+                ></div>
+                <div 
+                  style={{ 
+                    flex: 1, 
+                    marginLeft: '15px',
+                    height: '40px',
+                    backgroundColor: '#eee',
+                    borderRadius: '3px'
+                  }}
+                ></div>
+              </li>
+            ))
+          ) : (
+            popularArticles.map((article, index) => (
+              <li key={article.id} className="flex-wr-sb-s p-b-22">
+                <div className="size-a-8 flex-c-c borad-3 size-a-8 bg9 f1-m-4 cl0 m-b-6">
+                  {index + 1}
+                </div>
+                <Link 
+                  href={`/articles/${article.slug}`} 
+                  className="size-w-3 f1-s-7 cl3 hov-cl10 trans-03"
+                  style={{
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    lineHeight: '1.5'
+                  }}
+                >
+                  {article.title}
+                </Link>
+              </li>
+            ))
+          )}
         </ul>
       </div>
 
@@ -758,38 +1320,26 @@ function Sidebar() {
 
 // Latest Posts Section
 function LatestPosts() {
-  const posts = [
-    {
-      image: '/images/latest-01.jpg',
-      title: 'Thủ tướng: Mãi mãi tỏa sáng truyền thống vẻ vang, phẩm chất tốt đẹp của phụ nữ Việt Nam',
-      date: '18 Tháng 2'
-    },
-    {
-      image: '/images/latest-02.jpg',
-      title: 'Bộ trưởng Đào Hồng Lan gửi thư chúc mừng thầy, cô giáo, người lao động trong cơ sở đào tạo nhân lực ngành y',
-      date: '16 Tháng 2'
-    },
-    {
-      image: '/images/latest-03.jpg',
-      title: 'Hai ca bệnh ghép tủy đồng loại đầu tiên tại miền Trung - Tây Nguyên xuất viện',
-      date: '15 Tháng 2'
-    },
-    {
-      image: '/images/latest-04.jpg',
-      title: 'Trắng đêm cấp cứu nạn nhân bão YAGI',
-      date: '13 Tháng 2'
-    },
-    {
-      image: '/images/latest-05.jpg',
-      title: 'Chăm sóc sức khỏe cộng đồng: Nhiệm vụ không của riêng ai',
-      date: '10 Tháng 2'
-    },
-    {
-      image: '/images/latest-06.jpg',
-      title: 'Bác sĩ cảnh báo, nguy cơ đột quỵ cao trong thời tiết nắng nóng cực đoan',
-      date: '9 Tháng 2'
-    }
-  ];
+  const [posts, setPosts] = useState<FeaturedArticle[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch 6 latest articles (no filter, sorted by creation date)
+    fetch('/api/news-articles?limit=6')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setPosts(data);
+        }
+      })
+      .catch(err => console.error('Error fetching latest articles:', err))
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN', { day: 'numeric', month: 'long' });
+  };
 
   return (
     <section className="bg0 p-t-60 p-b-35">
@@ -801,27 +1351,55 @@ function LatestPosts() {
             </div>
 
             <div className="row p-t-35">
-              {posts.map((post, index) => (
-                <div key={index} className="col-sm-6 p-r-25 p-r-15-sr991">
-                  <div className="m-b-45">
-                    <a href="#" className="wrap-pic-w hov1 trans-03">
-                      <img src={post.image} alt="IMG" />
-                    </a>
-                    <div className="p-t-16">
-                      <h5 className="p-b-5">
-                        <a href="#" className="f1-m-3 cl2 hov-cl10 trans-03">{post.title}</a>
-                      </h5>
-                      <span className="cl8">
-                        <a href="#" className="f1-s-4 cl8 hov-cl10 trans-03">
-                          bởi Viện Phát triển Văn hóa và Chăm sóc Sức khỏe Cộng đồng
-                        </a>
-                        <span className="f1-s-3 m-rl-3">-</span>
-                        <span className="f1-s-3">{post.date}</span>
-                      </span>
+              {isLoading ? (
+                // Loading skeleton
+                Array.from({ length: 6 }).map((_, index) => (
+                  <div key={index} className="col-sm-6 p-r-25 p-r-15-sr991">
+                    <div className="m-b-45">
+                      <div style={{ backgroundColor: '#f5f5f5', height: '200px', borderRadius: '3px', marginBottom: '16px' }}></div>
+                      <div style={{ backgroundColor: '#f5f5f5', height: '20px', borderRadius: '3px', marginBottom: '10px' }}></div>
+                      <div style={{ backgroundColor: '#f5f5f5', height: '15px', borderRadius: '3px', width: '60%' }}></div>
                     </div>
                   </div>
+                ))
+              ) : posts.length > 0 ? (
+                posts.map((post) => (
+                  <div key={post.id} className="col-sm-6 p-r-25 p-r-15-sr991">
+                    <div className="m-b-45">
+                      <Link href={`/articles/${post.slug}`} className="wrap-pic-w hov1 trans-03">
+                        <img 
+                          src={post.cover || '/images/latest-01.jpg'} 
+                          alt={post.title}
+                          style={{
+                            width: '100%',
+                            height: '200px',
+                            objectFit: 'cover',
+                            borderRadius: '3px'
+                          }}
+                        />
+                      </Link>
+                      <div className="p-t-16">
+                        <h5 className="p-b-5">
+                          <Link href={`/articles/${post.slug}`} className="f1-m-3 cl2 hov-cl10 trans-03">
+                            {post.title}
+                          </Link>
+                        </h5>
+                        <span className="cl8">
+                          <span className="f1-s-4 cl8">
+                            bởi Viện Phát triển Văn hóa và Chăm sóc Sức khỏe Cộng đồng
+                          </span>
+                          <span className="f1-s-3 m-rl-3">-</span>
+                          <span className="f1-s-3">{formatDate(post.createdAt)}</span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="col-12 p-tb-50 text-center">
+                  <p className="f1-s-1 cl6">Chưa có bài viết nào.</p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
 
@@ -836,7 +1414,15 @@ function LatestPosts() {
 
                 <div>
                   <div className="wrap-pic-w pos-relative">
-                    <img src="/images/video-01.jpg" alt="IMG" />
+                    <img 
+                      src="https://img.youtube.com/vi/y-1dOubitUE/maxresdefault.jpg" 
+                      alt="Hội nghị khoa học toàn quốc Kết hợp Đông - Tây y trong chẩn đoán, điều trị Bệnh trào ngược dạ dày"
+                      style={{
+                        width: '100%',
+                        height: 'auto',
+                        display: 'block'
+                      }}
+                    />
                     <button className="s-full ab-t-l flex-c-c fs-32 cl0 hov-cl10 trans-03" data-toggle="modal" data-target="#modal-video-01">
                       <span className="fab fa-youtube"></span>
                     </button>
@@ -844,15 +1430,13 @@ function LatestPosts() {
                   <div className="p-tb-16 p-rl-25 bg3">
                     <h5 className="p-b-5">
                       <a href="#" className="f1-m-3 cl0 hov-cl10 trans-03">
-                        7 thực phẩm giàu omega-3 tốt cho da và tóc
+                        Hội nghị khoa học toàn quốc Kết hợp Đông - Tây y trong chẩn đoán, điều trị Bệnh trào ngược dạ dày
                       </a>
                     </h5>
                     <span className="cl15">
-                      <a href="#" className="f1-s-4 cl8 hov-cl10 trans-03">
+                      <span className="f1-s-4 cl8">
                         bởi Viện Phát triển Văn hóa và Chăm sóc Sức khỏe Cộng đồng
-                      </a>
-                      <span className="f1-s-3 m-rl-3">-</span>
-                      <span className="f1-s-3">18 Tháng 2</span>
+                      </span>
                     </span>
                   </div>
                 </div>
@@ -922,21 +1506,23 @@ function LatestPosts() {
 }
 
 // Post Item Components
-function PostItem({ image, title, category, date, large }: { 
+function PostItem({ image, title, category, date, large, slug }: { 
   image: string; 
   title: string; 
   category: string; 
   date: string;
   large?: boolean;
+  slug?: string;
 }) {
+  const articleUrl = slug ? `/articles/${slug}` : '/articles';
   return (
     <div className="m-b-30">
-      <Link href="/articles" className="wrap-pic-w hov1 trans-03">
+      <Link href={articleUrl} className="wrap-pic-w hov1 trans-03">
         <img src={image} alt="IMG" />
       </Link>
       <div className="p-t-20">
         <h5 className="p-b-5">
-          <Link href="/articles" className={`${large ? 'f1-m-3' : 'f1-s-5'} cl2 hov-cl10 trans-03`}>
+          <Link href={articleUrl} className={`${large ? 'f1-m-3' : 'f1-s-5'} cl2 hov-cl10 trans-03`}>
             {title}
           </Link>
         </h5>
@@ -952,20 +1538,22 @@ function PostItem({ image, title, category, date, large }: {
   );
 }
 
-function PostItemSmall({ image, title, category, date }: { 
+function PostItemSmall({ image, title, category, date, slug }: { 
   image: string; 
   title: string; 
   category: string; 
   date: string;
+  slug?: string;
 }) {
+  const articleUrl = slug ? `/articles/${slug}` : '/articles';
   return (
     <div className="flex-wr-sb-s m-b-30">
-      <Link href="/articles" className="size-w-1 wrap-pic-w hov1 trans-03">
+      <Link href={articleUrl} className="size-w-1 wrap-pic-w hov1 trans-03">
         <img src={image} alt="IMG" />
       </Link>
       <div className="size-w-2">
         <h5 className="p-b-5">
-          <Link href="/articles" className="f1-s-5 cl3 hov-cl10 trans-03">
+          <Link href={articleUrl} className="f1-s-5 cl3 hov-cl10 trans-03">
             {title}
           </Link>
         </h5>

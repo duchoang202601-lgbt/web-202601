@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
+import { Suspense } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ClientInit from '@/components/ClientInit';
 import BackToTop from '@/components/BackToTop';
 import FixedMenuHandler from '@/components/FixedMenuHandler';
+import LoadingIndicator from '@/components/LoadingIndicator';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -69,8 +71,20 @@ export default function RootLayout({
             console.trace = noop;
           })();
         `}} />
+        
+        {/* Disable scroll restoration and ensure scroll to top */}
+        <script dangerouslySetInnerHTML={{ __html: `
+          if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+          }
+        `}} />
       </head>
       <body className="animsition page-loaded">
+        {/* Loading indicator */}
+        <Suspense fallback={null}>
+          <LoadingIndicator />
+        </Suspense>
+        
         {/* Client-side initialization */}
         <ClientInit />
         
@@ -116,7 +130,7 @@ function VideoModal() {
         <div className="close-mo-video-01 trans-0-4" data-dismiss="modal" aria-label="Close">&times;</div>
         <div className="wrap-video-mo-01">
           <div className="video-mo-01">
-            <iframe src="https://www.youtube.com/embed/wJnBTPUQS5A?rel=0" allowFullScreen></iframe>
+            <iframe src="https://www.youtube.com/embed/y-1dOubitUE?rel=0" allowFullScreen></iframe>
           </div>
         </div>
       </div>

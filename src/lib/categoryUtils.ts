@@ -15,7 +15,7 @@ const categoryMap: Record<string, string> = {
   'chinh-tri': 'Chính trị',
   'kinh-te': 'Kinh tế',
   'tu-van': 'Tư vấn',
-  'suc-khoe': 'Sống khỏe',
+  'song-khoe': 'Sống khỏe',
   'phap-luat': 'Pháp luật',
   'an-ninh-xa-hoi': 'An ninh xã hội',
   'cac-bai-thuoc': 'Các bài thuốc',

@@ -50,11 +50,11 @@ export default function Footer() {
                     </p>
                     <p className="p-b-5">
                       <i className="fas fa-phone m-r-5"></i>
-                      <strong>Điện thoại:</strong> 0814288868 - <strong>Email:</strong> duchongntnl@gmail.com
+                      <strong>Điện thoại:</strong> 0123456789 - <strong>Email:</strong> ..............@gmail.com
                     </p>
                     <p className="p-b-5">
                       <i className="fas fa-globe m-r-5"></i>
-                      <strong>Website:</strong> Vanhoasuckhoecongdong.vn
+                      <strong>Website:</strong> Xxxxxxxxxxxxxxx.vn
                     </p>
                   </div>
                 </div>
@@ -106,7 +106,7 @@ export default function Footer() {
       <div className="bg11">
         <div className="container size-h-4 flex-c-c p-tb-15">
           <span className="f1-s-1 cl0 txt-center">
-            © {new Date().getFullYear()} Bản quyền thuộc VIỆN PHÁT TRIỂN VĂN HÓA VÀ CHĂM SÓC SỨC KHỎE CỘNG ĐỒNG. Thiết kế website – LT. DUke
+            © {new Date().getFullYear()} Bản quyền thuộc VIỆN PHÁT TRIỂN VĂN HÓA VÀ CHĂM SÓC SỨC KHỎE CỘNG ĐỒNG. Thiết kế website – Duke
           </span>
         </div>
       </div>

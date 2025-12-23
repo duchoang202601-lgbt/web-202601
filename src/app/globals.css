@@ -221,6 +221,13 @@ img {
   }
 }
 
+/* Tăng kích thước chữ menu chính */
+.main-menu > li > a,
+.main-menu > li > .nowarp-text {
+  font-size: 14px !important;
+  margin: 0 12px !important;
+}
+
 /* Ẩn mũi tên dropdown cho menu item không có submenu */
 .main-menu li.no-dropdown > a::after,
 .main-menu li.no-dropdown > .nowarp-text::after {

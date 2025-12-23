@@ -89,13 +89,41 @@ export default function ClientInit() {
 
   // Re-initialize on route change (for Next.js navigation)
   useEffect(() => {
+    // Scroll to top on route change
+    const scrollToTop = () => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
+    
+    // Scroll immediately
+    scrollToTop();
+    
+    // Scroll after render
+    requestAnimationFrame(() => {
+      scrollToTop();
+    });
+    
+    // Scroll after delays to ensure it works
+    const timeouts = [
+      setTimeout(scrollToTop, 0),
+      setTimeout(scrollToTop, 50),
+      setTimeout(scrollToTop, 100),
+      setTimeout(scrollToTop, 200),
+      setTimeout(scrollToTop, 300),
+    ];
+    
     if (typeof window !== 'undefined' && window.reinitMainJS) {
       // Small delay to ensure new page content is rendered
       const timeout = setTimeout(() => {
         window.reinitMainJS?.();
       }, 100);
-      return () => clearTimeout(timeout);
+      timeouts.push(timeout);
     }
+    
+    return () => {
+      timeouts.forEach(clearTimeout);
+    };
   }, [pathname]);
 
   return null;

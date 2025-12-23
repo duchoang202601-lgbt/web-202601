@@ -1,8 +1,32 @@
 import { Client } from '@notionhq/client';
 
+if (!process.env.NOTION_API_KEY) {
+  throw new Error('NOTION_API_KEY is not set in environment variables');
+}
+
+if (!process.env.NOTION_DATABASE_ARTICLES_ID) {
+  throw new Error('NOTION_DATABASE_ARTICLES_ID is not set in environment variables');
+}
+
+// Debug: Log environment variables (only in development, never log full API key)
+if (process.env.NODE_ENV === 'development') {
+  console.log('[Notion Config] API Key exists:', !!process.env.NOTION_API_KEY);
+  console.log('[Notion Config] API Key prefix:', process.env.NOTION_API_KEY?.substring(0, 10) + '...');
+  console.log('[Notion Config] Database ID (raw):', process.env.NOTION_DATABASE_ARTICLES_ID);
+}
+
 const notion = new Client({
   auth: process.env.NOTION_API_KEY,
 });
+
+// Format database ID (remove dashes if present, Notion accepts both formats)
+function formatDatabaseId(id: string): string {
+  const formatted = id.replace(/-/g, '');
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[Notion Config] Database ID (formatted):', formatted);
+  }
+  return formatted;
+}
 
 type Article = {
   id: string;
@@ -51,8 +75,14 @@ export default async function getNotionArticles({
   }
 
   const response = await notion.databases.query({
-    database_id: process.env.NOTION_DATABASE_ARTICLES_ID!,
+    database_id: formatDatabaseId(process.env.NOTION_DATABASE_ARTICLES_ID!),
     ...(filters.length > 0 && { filter: { and: filters } }),
+    sorts: [
+      {
+        timestamp: 'created_time',
+        direction: 'descending',
+      },
+    ],
     page_size: limit,
     ...(cursor && { start_cursor: cursor }),
   })
@@ -66,11 +96,36 @@ export default async function getNotionArticles({
 
 export async function getFeaturedArticles(limit = 5): Promise<Article[]> {
   const response = await notion.databases.query({
-    database_id: process.env.NOTION_DATABASE_ARTICLES_ID!,
+    database_id: formatDatabaseId(process.env.NOTION_DATABASE_ARTICLES_ID!),
     filter: {
       property: 'highlight',
       checkbox: { equals: true },
     },
+    sorts: [
+      {
+        timestamp: 'created_time',
+        direction: 'descending',
+      },
+    ],
+    page_size: limit,
+  })
+
+  return response.results.map(mapArticle)
+}
+
+export async function getHighlightedArticles(limit = 5): Promise<Article[]> {
+  const response = await notion.databases.query({
+    database_id: formatDatabaseId(process.env.NOTION_DATABASE_ARTICLES_ID!),
+    filter: {
+      property: 'highlight',
+      checkbox: { equals: true },
+    },
+    sorts: [
+      {
+        timestamp: 'created_time',
+        direction: 'descending',
+      },
+    ],
     page_size: limit,
   })
 
@@ -79,7 +134,7 @@ export async function getFeaturedArticles(limit = 5): Promise<Article[]> {
 
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
   const response = await notion.databases.query({
-    database_id: process.env.NOTION_DATABASE_ARTICLES_ID!,
+    database_id: formatDatabaseId(process.env.NOTION_DATABASE_ARTICLES_ID!),
     filter: {
       or: [
         {

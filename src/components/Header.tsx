@@ -222,7 +222,7 @@ export default function Header() {
               </span>
 
                   <a href="#" className="left-topbar-item">Về chúng tôi</a>
-                  <a href="#" className="left-topbar-item">Liên hệ</a>
+                  <Link href="/contact" className="left-topbar-item">Liên hệ</Link>
             </div>
 
             <div className="right-topbar">
@@ -282,7 +282,7 @@ export default function Header() {
 
             <li className="left-topbar">
                   <a href="#" className="left-topbar-item">Về chúng tôi</a>
-                  <a href="#" className="left-topbar-item">Liên hệ</a>
+                  <Link href="/contact" className="left-topbar-item">Liên hệ</Link>
             </li>
 
             <li className="right-topbar">
@@ -299,7 +299,7 @@ export default function Header() {
             ]} onLinkClick={() => setMobileMenuOpen(false)} />
             <MobileMenuItem title="Sức khỏe cộng đồng" href="/category/suc-khoe-cong-dong" subItems={[
               { title: 'Tư vấn', href: '/category/suc-khoe-cong-dong/tu-van' },
-              { title: 'Sống khỏe', href: '/category/suc-khoe-cong-dong/suc-khoe' }
+              { title: 'Sống khỏe', href: '/category/suc-khoe-cong-dong/song-khoe' }
             ]} onLinkClick={() => setMobileMenuOpen(false)} />
             <MobileMenuItem title="Văn hóa" href="/category/van-hoa" onLinkClick={() => setMobileMenuOpen(false)} />
             <MobileMenuItem title="Xã hội" href="/category/xa-hoi" subItems={[
@@ -364,7 +364,7 @@ export default function Header() {
                   ]} />
                   <DesktopMenuItem title="Sức khỏe cộng đồng" href="/category/suc-khoe-cong-dong" subItems={[
                     { title: 'Tư vấn', href: '/category/suc-khoe-cong-dong/tu-van' },
-                    { title: 'Sống khỏe', href: '/category/suc-khoe-cong-dong/suc-khoe' }
+                    { title: 'Sống khỏe', href: '/category/suc-khoe-cong-dong/song-khoe' }
                   ]} />
                   <li className="no-dropdown">
                     <Link className="nowarp-text" href="/category/van-hoa">Văn hóa</Link>
