@@ -6,16 +6,13 @@ import { usePathname } from 'next/navigation';
 // Extend window type for custom functions
 declare global {
   interface Window {
-    jQuery: typeof jQuery;
+    jQuery: any;
+    $: any;
     initMainJS?: () => void;
     reinitMainJS?: () => void;
     initHomePageJS?: () => void;
     refreshWeather?: () => void;
   }
-}
-
-interface JQuery {
-  animsition: (options: unknown) => void;
 }
 
 export default function ClientInit() {

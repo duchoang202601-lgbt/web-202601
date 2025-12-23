@@ -173,7 +173,7 @@ export function initAllAnimations() {
   initMobileSubmenu();
   initTabs();
   initMegaMenu();
-  cleanups.push(initTrendingSlider());
+  initTrendingSlider();
   
   return () => {
     cleanups.forEach(cleanup => cleanup?.());

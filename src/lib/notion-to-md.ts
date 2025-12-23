@@ -19,10 +19,8 @@ const notion = new Client({
 // TYPES
 // ============================================
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type NotionBlockWithChildren = BlockObjectResponse & {
   children?: NotionBlockWithChildren[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 };
 
@@ -137,7 +135,6 @@ function getFileUrl(file: { type: 'external' | 'file'; external?: { url: string 
  */
 function blockToMarkdown(block: NotionBlockWithChildren, indent: number = 0): string {
   const indentStr = '  '.repeat(indent);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const blockData = block[block.type as keyof typeof block] as any;
 
   // Xử lý children
@@ -264,7 +261,6 @@ function blockToMarkdown(block: NotionBlockWithChildren, indent: number = 0): st
       const rows: string[][] = [];
       for (const row of block.children) {
         if (row.type === 'table_row') {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const rowData = (row as any).table_row;
           if (rowData?.cells) {
             const cells = rowData.cells.map((cell: RichTextItemResponse[]) => richTextToMarkdown(cell));
