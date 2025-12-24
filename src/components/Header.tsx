@@ -115,28 +115,6 @@ export default function Header() {
       });
     };
 
-    const fetchIpLocation = async () => {
-      try {
-        const res = await fetch('https://ipapi.co/json/', { signal: abortController.signal });
-        if (!res.ok) return null;
-        const data = (await res.json()) as {
-          latitude?: number;
-          longitude?: number;
-          city?: string;
-          country_code?: string;
-        };
-        if (typeof data.latitude === 'number' && typeof data.longitude === 'number') {
-          const city = (data.city || '').trim();
-          const country = String(data.country_code || '').toUpperCase();
-          const hint = city && country ? `${city}, ${country}` : city || undefined;
-          return { lat: data.latitude, lon: data.longitude, hint };
-        }
-      } catch {
-        // ignore
-      }
-      return null;
-    };
-
     // 1) Instant render from cache (if any)
     const cached = loadCache();
     if (cached?.data) {
@@ -149,13 +127,7 @@ export default function Header() {
       updateFromCoords(cached.coords.lat, cached.coords.lon, cached.data?.location);
     }
 
-    // 3) Fast fallback via IP-based location (no permission prompt)
-    fetchIpLocation().then((ip) => {
-      if (!ip || cancelled || abortController.signal.aborted) return;
-      updateFromCoords(ip.lat, ip.lon, ip.hint);
-    });
-
-    // 4) Try geolocation (may be slower due to permission prompt)
+    // 3) Try geolocation
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {

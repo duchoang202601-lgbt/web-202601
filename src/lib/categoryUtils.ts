@@ -59,3 +59,22 @@ export function getDisplayCategory(
   return fallback
 }
 
+/**
+ * Tạo URL category từ category và subCategory
+ * @param category - Category slug
+ * @param subCategory - SubCategory slug (optional)
+ * @returns URL category (vd: "/category/suc-khoe-cong-dong/tu-van")
+ */
+export function getCategoryUrl(
+  category?: string | null,
+  subCategory?: string | null
+): string {
+  if (subCategory && category) {
+    return `/category/${category}/${subCategory}`
+  }
+  if (category) {
+    return `/category/${category}`
+  }
+  return '#'
+}
+

@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import TrendingNews from '@/components/TrendingNews';
-import { getDisplayCategory } from '@/lib/categoryUtils';
+import SearchBox from '@/components/SearchBox';
+import { getDisplayCategory, getCategoryUrl } from '@/lib/categoryUtils';
 
 type FeaturedArticle = {
   id: string;
@@ -28,7 +29,7 @@ export default function Home() {
           setFeaturedArticles(data);
         }
       })
-      .catch(err => console.error('Error fetching featured articles:', err))
+      .catch(() => {})
       .finally(() => setIsLoading(false));
   }, []);
 
@@ -49,12 +50,7 @@ export default function Home() {
           </div>
 
           {/* Phần Tìm kiếm */}
-          <div className="pos-relative size-a-2 bo-1-rad-22 of-hidden bocl11 m-tb-6 search-section">
-            <input className="f1-s-1 cl6 plh9 s-full p-l-25 p-r-45" type="text" name="search" placeholder="Tìm kiếm" />
-            <button className="flex-c-c size-a-1 ab-t-r fs-20 cl2 hov-cl10 trans-03">
-              <i className="zmdi zmdi-search"></i>
-            </button>
-          </div>
+          <SearchBox />
         </div>
       </div>
         
@@ -72,9 +68,12 @@ export default function Home() {
                 >
                   <Link href={`/articles/${featuredArticles[0]?.slug || ''}`} className="dis-block how1-child1 trans-03"></Link>
                   <div className="flex-col-e-s s-full p-rl-25 p-tb-20">
-                    <span className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2">
+                    <Link 
+                      href={getCategoryUrl(featuredArticles[0]?.category, featuredArticles[0]?.subCategory)}
+                      className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2"
+                    >
                       {getDisplayCategory(featuredArticles[0]?.category, featuredArticles[0]?.subCategory, 'Sống khỏe')}
-                    </span>
+                    </Link>
                     <h3 className="how1-child2 m-t-14 m-b-10">
                       <Link href={`/articles/${featuredArticles[0]?.slug || ''}`} className="how-txt1 size-a-6 f1-l-1 cl0 hov-cl10 trans-03">
                         {featuredArticles[0]?.title || 'Đang tải...'}
@@ -100,9 +99,12 @@ export default function Home() {
                     >
                       <Link href={`/articles/${featuredArticles[1]?.slug || ''}`} className="dis-block how1-child1 trans-03"></Link>
                       <div className="flex-col-e-s s-full p-rl-25 p-tb-24">
-                        <span className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2">
+                        <Link 
+                          href={getCategoryUrl(featuredArticles[1]?.category, featuredArticles[1]?.subCategory)}
+                          className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2"
+                        >
                           {getDisplayCategory(featuredArticles[1]?.category, featuredArticles[1]?.subCategory, 'Tư vấn')}
-                        </span>
+                        </Link>
                         <h3 className="how1-child2 m-t-14">
                           <Link href={`/articles/${featuredArticles[1]?.slug || ''}`} className="how-txt1 size-a-7 f1-l-2 cl0 hov-cl10 trans-03">
                             {featuredArticles[1]?.title || 'Đang tải...'}
@@ -123,9 +125,12 @@ export default function Home() {
                     >
                       <Link href={`/articles/${featuredArticles[2]?.slug || ''}`} className="dis-block how1-child1 trans-03"></Link>
                       <div className="flex-col-e-s s-full p-rl-25 p-tb-20">
-                        <span className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2">
+                        <Link 
+                          href={getCategoryUrl(featuredArticles[2]?.category, featuredArticles[2]?.subCategory)}
+                          className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2"
+                        >
                           {getDisplayCategory(featuredArticles[2]?.category, featuredArticles[2]?.subCategory, 'Doanh nghiệp')}
-                        </span>
+                        </Link>
                         <h3 className="how1-child2 m-t-14">
                           <Link href={`/articles/${featuredArticles[2]?.slug || ''}`} className="how-txt1 size-h-1 f1-m-1 cl0 hov-cl10 trans-03">
                             {featuredArticles[2]?.title || 'Đang tải...'}
@@ -146,9 +151,12 @@ export default function Home() {
                     >
                       <Link href={`/articles/${featuredArticles[3]?.slug || ''}`} className="dis-block how1-child1 trans-03"></Link>
                       <div className="flex-col-e-s s-full p-rl-25 p-tb-20">
-                        <span className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2">
+                        <Link 
+                          href={getCategoryUrl(featuredArticles[3]?.category, featuredArticles[3]?.subCategory)}
+                          className="dis-block how1-child2 f1-s-2 cl0 bo-all-1 bocl0 hov-btn1 trans-03 p-rl-5 p-t-2"
+                        >
                           {getDisplayCategory(featuredArticles[3]?.category, featuredArticles[3]?.subCategory, 'Sống khỏe')}
-                        </span>
+                        </Link>
                         <h3 className="how1-child2 m-t-14">
                           <Link href={`/articles/${featuredArticles[3]?.slug || ''}`} className="how-txt1 size-h-1 f1-m-1 cl0 hov-cl10 trans-03">
                             {featuredArticles[3]?.title || 'Đang tải...'}
@@ -225,7 +233,7 @@ function NewsTab() {
           setAllArticles(data);
         }
       })
-      .catch(err => console.error('Error fetching all news articles:', err))
+      .catch(() => {})
       .finally(() => setIsLoadingAll(false));
   }, []);
 
@@ -238,7 +246,7 @@ function NewsTab() {
           setPoliticsArticles(data);
         }
       })
-      .catch(err => console.error('Error fetching politics articles:', err))
+      .catch(() => {})
       .finally(() => setIsLoadingPolitics(false));
   }, []);
 
@@ -251,7 +259,7 @@ function NewsTab() {
           setEconomyArticles(data);
         }
       })
-      .catch(err => console.error('Error fetching economy articles:', err))
+      .catch(() => {})
       .finally(() => setIsLoadingEconomy(false));
   }, []);
 
@@ -277,7 +285,7 @@ function NewsTab() {
                 data-toggle="tab" 
                 href="#tab1-1" 
                 role="tab"
-                onClick={(e) => handleTabClick(e, 'tab1-1')}
+                onClick={(e) => { e.preventDefault(); if (activeTab !== 'tab1-1') setActiveTab('tab1-1'); }}
               >
                 Tất cả
               </a>
@@ -288,7 +296,7 @@ function NewsTab() {
                 data-toggle="tab" 
                 href="#tab1-2" 
                 role="tab"
-                onClick={(e) => handleTabClick(e, 'tab1-2')}
+                onClick={(e) => { e.preventDefault(); if (activeTab !== 'tab1-2') setActiveTab('tab1-2'); }}
               >
                 Chính trị
               </a>
@@ -299,7 +307,7 @@ function NewsTab() {
                 data-toggle="tab" 
                 href="#tab1-3" 
                 role="tab"
-                onClick={(e) => handleTabClick(e, 'tab1-3')}
+                onClick={(e) => { e.preventDefault(); if (activeTab !== 'tab1-3') setActiveTab('tab1-3'); }}
               >
                 Kinh tế
               </a>
@@ -416,6 +424,7 @@ function NewsTab() {
                   image={allArticles[0]?.cover || '/images/post-05.jpg'}
                   title={allArticles[0]?.title || ''}
                   category={getDisplayCategory(allArticles[0]?.category, allArticles[0]?.subCategory, 'Tin tức')}
+                  categoryUrl={getCategoryUrl(allArticles[0]?.category, allArticles[0]?.subCategory)}
                   date={allArticles[0]?.createdAt ? formatDate(allArticles[0].createdAt) : ''}
                   slug={allArticles[0]?.slug}
                   large
@@ -428,6 +437,7 @@ function NewsTab() {
                     image={article.cover || '/images/post-06.jpg'}
                     title={article.title}
                     category={getDisplayCategory(article.category, article.subCategory, 'Tin tức')}
+                    categoryUrl={getCategoryUrl(article.category, article.subCategory)}
                     date={formatDate(article.createdAt)}
                     slug={article.slug}
                   />
@@ -461,6 +471,7 @@ function NewsTab() {
                   image={politicsArticles[0]?.cover || '/images/post-05.jpg'}
                   title={politicsArticles[0]?.title || ''}
                   category="Chính trị"
+                  categoryUrl="/category/tin-tuc/chinh-tri"
                   date={politicsArticles[0]?.createdAt ? formatDate(politicsArticles[0].createdAt) : ''}
                   slug={politicsArticles[0]?.slug}
                   large
@@ -473,6 +484,7 @@ function NewsTab() {
                     image={article.cover || '/images/post-06.jpg'}
                     title={article.title}
                     category="Chính trị"
+                    categoryUrl="/category/tin-tuc/chinh-tri"
                     date={formatDate(article.createdAt)}
                     slug={article.slug}
                   />
@@ -506,6 +518,7 @@ function NewsTab() {
                   image={economyArticles[0]?.cover || '/images/post-07.jpg'}
                   title={economyArticles[0]?.title || ''}
                   category="Kinh tế"
+                  categoryUrl="/category/tin-tuc/kinh-te"
                   date={economyArticles[0]?.createdAt ? formatDate(economyArticles[0].createdAt) : ''}
                   slug={economyArticles[0]?.slug}
                   large
@@ -518,6 +531,7 @@ function NewsTab() {
                     image={article.cover || '/images/post-08.jpg'}
                     title={article.title}
                     category="Kinh tế"
+                    categoryUrl="/category/tin-tuc/kinh-te"
                     date={formatDate(article.createdAt)}
                     slug={article.slug}
                   />
@@ -555,7 +569,7 @@ function EconomyTab() {
           setAllArticles(data);
         }
       })
-      .catch(err => console.error('Error fetching all health articles:', err))
+      .catch(() => {})
       .finally(() => setIsLoadingAll(false));
   }, []);
 
@@ -568,7 +582,7 @@ function EconomyTab() {
           setTuVanArticles(data);
         }
       })
-      .catch(err => console.error('Error fetching tu-van articles:', err))
+      .catch(() => {})
       .finally(() => setIsLoadingTuVan(false));
   }, []);
 
@@ -581,7 +595,7 @@ function EconomyTab() {
           setSongKhoeArticles(data);
         }
       })
-      .catch(err => console.error('Error fetching song-khoe articles:', err))
+      .catch(() => {})
       .finally(() => setIsLoadingSongKhoe(false));
   }, []);
 
@@ -607,7 +621,7 @@ function EconomyTab() {
               data-toggle="tab" 
               href="#tab2-1" 
               role="tab"
-              onClick={(e) => handleTabClick(e, 'tab2-1')}
+              onClick={(e) => { e.preventDefault(); if (activeTab !== 'tab2-1') setActiveTab('tab2-1'); }}
             >
               Tất cả
             </a>
@@ -618,7 +632,7 @@ function EconomyTab() {
               data-toggle="tab" 
               href="#tab2-2" 
               role="tab"
-              onClick={(e) => handleTabClick(e, 'tab2-2')}
+              onClick={(e) => { e.preventDefault(); if (activeTab !== 'tab2-2') setActiveTab('tab2-2'); }}
             >
               Tư vấn
             </a>
@@ -629,7 +643,7 @@ function EconomyTab() {
               data-toggle="tab" 
               href="#tab2-3" 
               role="tab"
-              onClick={(e) => handleTabClick(e, 'tab2-3')}
+              onClick={(e) => { e.preventDefault(); if (activeTab !== 'tab2-3') setActiveTab('tab2-3'); }}
             >
               Sống khỏe
             </a>
@@ -746,6 +760,7 @@ function EconomyTab() {
                   image={allArticles[0]?.cover || '/images/post-10.jpg'}
                   title={allArticles[0]?.title || ''}
                   category={getDisplayCategory(allArticles[0]?.category, allArticles[0]?.subCategory, 'Sức khỏe cộng đồng')}
+                  categoryUrl={getCategoryUrl(allArticles[0]?.category, allArticles[0]?.subCategory)}
                   date={allArticles[0]?.createdAt ? formatDate(allArticles[0].createdAt) : ''}
                   slug={allArticles[0]?.slug}
                   large
@@ -758,6 +773,7 @@ function EconomyTab() {
                     image={article.cover || '/images/post-11.jpg'}
                     title={article.title}
                     category={getDisplayCategory(article.category, article.subCategory, 'Sức khỏe cộng đồng')}
+                    categoryUrl={getCategoryUrl(article.category, article.subCategory)}
                     date={formatDate(article.createdAt)}
                     slug={article.slug}
                   />
@@ -791,6 +807,7 @@ function EconomyTab() {
                   image={tuVanArticles[0]?.cover || '/images/post-10.jpg'}
                   title={tuVanArticles[0]?.title || ''}
                   category="Tư vấn"
+                  categoryUrl="/category/suc-khoe-cong-dong/tu-van"
                   date={tuVanArticles[0]?.createdAt ? formatDate(tuVanArticles[0].createdAt) : ''}
                   slug={tuVanArticles[0]?.slug}
                   large
@@ -803,6 +820,7 @@ function EconomyTab() {
                     image={article.cover || '/images/post-11.jpg'}
                     title={article.title}
                     category="Tư vấn"
+                    categoryUrl="/category/suc-khoe-cong-dong/tu-van"
                     date={formatDate(article.createdAt)}
                     slug={article.slug}
                   />
@@ -836,6 +854,7 @@ function EconomyTab() {
                   image={songKhoeArticles[0]?.cover || '/images/post-10.jpg'}
                   title={songKhoeArticles[0]?.title || ''}
                   category="Sống khỏe"
+                  categoryUrl="/category/suc-khoe-cong-dong/song-khoe"
                   date={songKhoeArticles[0]?.createdAt ? formatDate(songKhoeArticles[0].createdAt) : ''}
                   slug={songKhoeArticles[0]?.slug}
                   large
@@ -848,6 +867,7 @@ function EconomyTab() {
                     image={article.cover || '/images/post-11.jpg'}
                     title={article.title}
                     category="Sống khỏe"
+                    categoryUrl="/category/suc-khoe-cong-dong/song-khoe"
                     date={formatDate(article.createdAt)}
                     slug={article.slug}
                   />
@@ -885,7 +905,7 @@ function CultureTab() {
           setAllArticles(data);
         }
       })
-      .catch(err => console.error('Error fetching all society articles:', err))
+      .catch(() => {})
       .finally(() => setIsLoadingAll(false));
   }, []);
 
@@ -898,7 +918,7 @@ function CultureTab() {
           setPhapLuatArticles(data);
         }
       })
-      .catch(err => console.error('Error fetching phap-luat articles:', err))
+      .catch(() => {})
       .finally(() => setIsLoadingPhapLuat(false));
   }, []);
 
@@ -911,7 +931,7 @@ function CultureTab() {
           setAnNinhXaHoiArticles(data);
         }
       })
-      .catch(err => console.error('Error fetching an-ninh-xa-hoi articles:', err))
+      .catch(() => {})
       .finally(() => setIsLoadingAnNinhXaHoi(false));
   }, []);
 
@@ -937,7 +957,7 @@ function CultureTab() {
               data-toggle="tab" 
               href="#tab3-1" 
               role="tab"
-              onClick={(e) => handleTabClick(e, 'tab3-1')}
+              onClick={(e) => { e.preventDefault(); if (activeTab !== 'tab3-1') setActiveTab('tab3-1'); }}
             >
               Tất cả
             </a>
@@ -948,7 +968,7 @@ function CultureTab() {
               data-toggle="tab" 
               href="#tab3-2" 
               role="tab"
-              onClick={(e) => handleTabClick(e, 'tab3-2')}
+              onClick={(e) => { e.preventDefault(); if (activeTab !== 'tab3-2') setActiveTab('tab3-2'); }}
             >
               Pháp luật
             </a>
@@ -959,7 +979,7 @@ function CultureTab() {
               data-toggle="tab" 
               href="#tab3-3" 
               role="tab"
-              onClick={(e) => handleTabClick(e, 'tab3-3')}
+              onClick={(e) => { e.preventDefault(); if (activeTab !== 'tab3-3') setActiveTab('tab3-3'); }}
             >
               An ninh xã hội
             </a>
@@ -1076,6 +1096,7 @@ function CultureTab() {
                   image={allArticles[0]?.cover || '/images/post-14.jpg'}
                   title={allArticles[0]?.title || ''}
                   category={getDisplayCategory(allArticles[0]?.category, allArticles[0]?.subCategory, 'Xã hội')}
+                  categoryUrl={getCategoryUrl(allArticles[0]?.category, allArticles[0]?.subCategory)}
                   date={allArticles[0]?.createdAt ? formatDate(allArticles[0].createdAt) : ''}
                   slug={allArticles[0]?.slug}
                   large
@@ -1088,6 +1109,7 @@ function CultureTab() {
                     image={article.cover || '/images/post-15.jpg'}
                     title={article.title}
                     category={getDisplayCategory(article.category, article.subCategory, 'Xã hội')}
+                    categoryUrl={getCategoryUrl(article.category, article.subCategory)}
                     date={formatDate(article.createdAt)}
                     slug={article.slug}
                   />
@@ -1121,6 +1143,7 @@ function CultureTab() {
                   image={phapLuatArticles[0]?.cover || '/images/post-14.jpg'}
                   title={phapLuatArticles[0]?.title || ''}
                   category="Pháp luật"
+                  categoryUrl="/category/xa-hoi/phap-luat"
                   date={phapLuatArticles[0]?.createdAt ? formatDate(phapLuatArticles[0].createdAt) : ''}
                   slug={phapLuatArticles[0]?.slug}
                   large
@@ -1133,6 +1156,7 @@ function CultureTab() {
                     image={article.cover || '/images/post-15.jpg'}
                     title={article.title}
                     category="Pháp luật"
+                    categoryUrl="/category/xa-hoi/phap-luat"
                     date={formatDate(article.createdAt)}
                     slug={article.slug}
                   />
@@ -1166,6 +1190,7 @@ function CultureTab() {
                   image={anNinhXaHoiArticles[0]?.cover || '/images/post-14.jpg'}
                   title={anNinhXaHoiArticles[0]?.title || ''}
                   category="An ninh xã hội"
+                  categoryUrl="/category/xa-hoi/an-ninh-xa-hoi"
                   date={anNinhXaHoiArticles[0]?.createdAt ? formatDate(anNinhXaHoiArticles[0].createdAt) : ''}
                   slug={anNinhXaHoiArticles[0]?.slug}
                   large
@@ -1178,6 +1203,7 @@ function CultureTab() {
                     image={article.cover || '/images/post-15.jpg'}
                     title={article.title}
                     category="An ninh xã hội"
+                    categoryUrl="/category/xa-hoi/an-ninh-xa-hoi"
                     date={formatDate(article.createdAt)}
                     slug={article.slug}
                   />
@@ -1208,7 +1234,7 @@ function Sidebar() {
           setPopularArticles(data);
         }
       })
-      .catch(err => console.error('Error fetching highlighted articles:', err))
+      .catch(() => {})
       .finally(() => setIsLoadingPopular(false));
   }, []);
 
@@ -1332,7 +1358,7 @@ function LatestPosts() {
           setPosts(data);
         }
       })
-      .catch(err => console.error('Error fetching latest articles:', err))
+      .catch(() => {})
       .finally(() => setIsLoading(false));
   }, []);
 
@@ -1385,9 +1411,12 @@ function LatestPosts() {
                           </Link>
                         </h5>
                         <span className="cl8">
-                          <span className="f1-s-4 cl8">
-                            bởi Viện Phát triển Văn hóa và Chăm sóc Sức khỏe Cộng đồng
-                          </span>
+                          <Link 
+                            href={getCategoryUrl(post.category, post.subCategory)} 
+                            className="f1-s-4 cl8 hov-cl10"
+                          >
+                            {getDisplayCategory(post.category, post.subCategory)}
+                          </Link>
                           <span className="f1-s-3 m-rl-3">-</span>
                           <span className="f1-s-3">{formatDate(post.createdAt)}</span>
                         </span>
@@ -1506,10 +1535,11 @@ function LatestPosts() {
 }
 
 // Post Item Components
-function PostItem({ image, title, category, date, large, slug }: { 
+function PostItem({ image, title, category, categoryUrl, date, large, slug }: { 
   image: string; 
   title: string; 
-  category: string; 
+  category: string;
+  categoryUrl?: string;
   date: string;
   large?: boolean;
   slug?: string;
@@ -1527,9 +1557,9 @@ function PostItem({ image, title, category, date, large, slug }: {
           </Link>
         </h5>
         <span className="cl8">
-          <a href="#" className={`${large ? 'f1-s-4' : 'f1-s-6'} cl8 hov-cl10 trans-03`}>
+          <Link href={categoryUrl || '#'} className={`${large ? 'f1-s-4' : 'f1-s-6'} cl8 hov-cl10 trans-03`}>
             {category}
-          </a>
+          </Link>
           <span className="f1-s-3 m-rl-3">-</span>
           <span className="f1-s-3">{date}</span>
         </span>
@@ -1538,10 +1568,11 @@ function PostItem({ image, title, category, date, large, slug }: {
   );
 }
 
-function PostItemSmall({ image, title, category, date, slug }: { 
+function PostItemSmall({ image, title, category, categoryUrl, date, slug }: { 
   image: string; 
   title: string; 
-  category: string; 
+  category: string;
+  categoryUrl?: string;
   date: string;
   slug?: string;
 }) {
@@ -1558,9 +1589,9 @@ function PostItemSmall({ image, title, category, date, slug }: {
           </Link>
         </h5>
         <span className="cl8">
-          <a href="#" className="f1-s-6 cl8 hov-cl10 trans-03">
+          <Link href={categoryUrl || '#'} className="f1-s-6 cl8 hov-cl10 trans-03">
             {category}
-          </a>
+          </Link>
           <span className="f1-s-3 m-rl-3">-</span>
           <span className="f1-s-3">{date}</span>
         </span>

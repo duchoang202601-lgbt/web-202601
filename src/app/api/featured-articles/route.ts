@@ -5,17 +5,9 @@ export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
-    // Debug: Check if env vars are loaded
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[API] NOTION_API_KEY exists:', !!process.env.NOTION_API_KEY);
-      console.log('[API] NOTION_DATABASE_ARTICLES_ID exists:', !!process.env.NOTION_DATABASE_ARTICLES_ID);
-      console.log('[API] NOTION_DATABASE_ARTICLES_ID value:', process.env.NOTION_DATABASE_ARTICLES_ID);
-    }
-    
     const articles = await getFeaturedArticles(4)
     return NextResponse.json(articles)
   } catch (error: any) {
-    console.error('Error fetching featured articles:', error)
     
     // Provide more helpful error messages
     if (error.code === 'object_not_found') {

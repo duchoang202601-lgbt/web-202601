@@ -18,7 +18,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json(result.items);
   } catch (error) {
-    console.error('Error fetching news articles:', error);
     return NextResponse.json(
       { error: 'Failed to fetch news articles' },
       { status: 500 }

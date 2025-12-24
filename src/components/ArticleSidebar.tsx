@@ -34,17 +34,14 @@ export default function ArticleSidebar() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    console.log('[ArticleSidebar] Fetching highlighted articles...');
     fetch('/api/highlighted-articles')
       .then(res => res.json())
       .then(data => {
-        console.log('[ArticleSidebar] Received data:', data);
         if (Array.isArray(data)) {
           setPopularArticles(data);
-          console.log('[ArticleSidebar] Set articles:', data.length);
         }
       })
-      .catch(err => console.error('[ArticleSidebar] Error:', err))
+      .catch(() => {})
       .finally(() => setIsLoading(false));
   }, []);
 

@@ -238,28 +238,45 @@ img {
 /* Fix layout tab01-head trên mobile - giống trang cũ */
 @media (max-width: 991px) {
   .tab01-head {
+    display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
-    flex-wrap: wrap !important;
+    flex-wrap: nowrap !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    height: auto !important;
+    min-height: 44px !important;
+  }
+  
+  .tab01-head.how2 {
+    height: auto !important;
+    padding: 0 10px !important;
   }
   
   .tab01-title {
-    margin-right: 15px !important;
+    margin-right: 8px !important;
     margin-bottom: 0 !important;
+    font-size: 13px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    padding-left: 5px !important;
   }
   
   .tab-nav-wrapper {
     position: relative !important;
     display: flex !important;
     align-items: center !important;
+    flex-shrink: 0 !important;
+    gap: 5px !important;
   }
   
   .tab01-head .nav-tabs {
-    flex: 1 !important;
     display: flex !important;
     flex-wrap: nowrap !important;
     overflow: hidden !important;
     margin-bottom: 0 !important;
+    flex-shrink: 0 !important;
+    border: none !important;
   }
   
   /* Ẩn các tab khác trên mobile, chỉ hiển thị "Tất cả" */
@@ -268,18 +285,29 @@ img {
   }
   
   .tab01-head .nav-tabs .nav-item:first-child {
-    margin-right: 10px !important;
+    margin-right: 0 !important;
+  }
+  
+  .tab01-head .nav-tabs .nav-link {
+    font-size: 13px !important;
+    padding: 4px 8px !important;
   }
   
   /* Hiển thị nút dropdown trên mobile */
   .mobile-dropdown-btn {
-    display: block !important;
+    display: flex !important;
+    flex-shrink: 0 !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
   
   .tab01-link {
     margin-left: auto !important;
     margin-top: 0 !important;
     white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    font-size: 12px !important;
+    padding-right: 0 !important;
   }
 }
 
@@ -557,4 +585,9 @@ img {
   position: relative !important;
 }
 
+/* Tab active không thể click */
+.tab01-head .nav-tabs .nav-link.active {
+  pointer-events: none !important;
+  cursor: default !important;
+}
 

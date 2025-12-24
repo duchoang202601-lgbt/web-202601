@@ -8,24 +8,14 @@ if (!process.env.NOTION_DATABASE_ARTICLES_ID) {
   throw new Error('NOTION_DATABASE_ARTICLES_ID is not set in environment variables');
 }
 
-// Debug: Log environment variables (only in development, never log full API key)
-if (process.env.NODE_ENV === 'development') {
-  console.log('[Notion Config] API Key exists:', !!process.env.NOTION_API_KEY);
-  console.log('[Notion Config] API Key prefix:', process.env.NOTION_API_KEY?.substring(0, 10) + '...');
-  console.log('[Notion Config] Database ID (raw):', process.env.NOTION_DATABASE_ARTICLES_ID);
-}
-
 const notion = new Client({
   auth: process.env.NOTION_API_KEY,
+  logLevel: 'error', // Chỉ log lỗi, không log requests
 });
 
 // Format database ID (remove dashes if present, Notion accepts both formats)
 function formatDatabaseId(id: string): string {
-  const formatted = id.replace(/-/g, '');
-  if (process.env.NODE_ENV === 'development') {
-    console.log('[Notion Config] Database ID (formatted):', formatted);
-  }
-  return formatted;
+  return id.replace(/-/g, '');
 }
 
 type Article = {

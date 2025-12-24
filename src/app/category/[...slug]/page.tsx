@@ -2,6 +2,7 @@ import Link from 'next/link'
 import getNotionArticles from '@/lib/notion'
 import { getCategoryName } from '@/lib/categoryUtils'
 import ArticleSidebar from '@/components/ArticleSidebar'
+import SearchBox from '@/components/SearchBox'
 
 // Revalidate mỗi 60 giây
 export const revalidate = 60
@@ -82,12 +83,7 @@ export default async function CategoryPage({ params }: { params: { slug: string[
           </div>
 
           {/* Phần Tìm kiếm */}
-          <div className="pos-relative size-a-2 bo-1-rad-22 of-hidden bocl11 m-tb-6 search-section">
-            <input className="f1-s-1 cl6 plh9 s-full p-l-25 p-r-45" type="text" name="search" placeholder="Tìm kiếm" />
-            <button className="flex-c-c size-a-1 ab-t-r fs-20 cl2 hov-cl10 trans-03">
-              <i className="zmdi zmdi-search"></i>
-            </button>
-          </div>
+          <SearchBox />
         </div>
       </div>
 
