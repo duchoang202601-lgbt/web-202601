@@ -1321,8 +1321,10 @@ function Sidebar() {
             </div>
           </li>
           <li className="flex-wr-sb-c p-b-20">
-            <a href="#" className="size-a-8 flex-c-c borad-3 size-a-8 bg-twitter fs-16 cl0 hov-cl0">
-              <span className="fab fa-twitter"></span>
+            <a href="https://www.tiktok.com/" className="size-a-8 flex-c-c borad-3 fs-16 cl0 hov-cl0" style={{ backgroundColor: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+              </svg>
             </a>
             <div className="size-w-3 flex-wr-sb-c">
               <span className="f1-s-8 cl3 p-r-20">568 Người theo dõi</span>
@@ -1372,8 +1374,15 @@ function LatestPosts() {
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-md-10 col-lg-8 p-b-20">
-            <div className="how2 how2-cl4 flex-s-c m-r-10 m-r-0-sr991">
+            <div className="tab01-head how2 how2-cl4 flex-s-c m-r-10 m-r-0-sr991">
               <h3 className="f1-m-2 cl3 tab01-title">Bài viết mới nhất</h3>
+              <Link 
+                href="/search"
+                className="tab01-link f1-s-1 cl9 hov-cl10 trans-03"
+              >
+                Xem tất cả
+                <i className="fs-12 m-l-5 fa fa-caret-right"></i>
+              </Link>
             </div>
 
             <div className="row p-t-35">

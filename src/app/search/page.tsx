@@ -3,8 +3,6 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import ArticleSidebar from '@/components/ArticleSidebar';
 import SearchBox from '@/components/SearchBox';
 import { getDisplayCategory, getCategoryUrl } from '@/lib/categoryUtils';
@@ -27,21 +25,21 @@ function SearchContent() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (query) {
-      setIsLoading(true);
-      fetch(`/api/search?q=${encodeURIComponent(query)}`)
-        .then(res => res.json())
-        .then(data => {
-          if (Array.isArray(data)) {
-            setArticles(data);
-          }
-        })
-        .catch(() => {})
-        .finally(() => setIsLoading(false));
-    } else {
-      setArticles([]);
-      setIsLoading(false);
-    }
+    setIsLoading(true);
+    // Nếu có từ khóa thì tìm kiếm, không thì lấy tất cả bài viết
+    const url = query 
+      ? `/api/search?q=${encodeURIComponent(query)}`
+      : '/api/news-articles?limit=50';
+    
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setArticles(data);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setIsLoading(false));
   }, [query]);
 
   const formatDate = (dateString: string) => {
@@ -50,9 +48,7 @@ function SearchContent() {
   };
 
   return (
-    <div className="animsition">
-      <Header />
-
+    <>
       {/* Breadcrumb + Search */}
       <div className="container search-container">
         <div className="bg0 flex-wr-sb-c p-rl-20 p-tb-8">
@@ -67,7 +63,7 @@ function SearchContent() {
             </Link>
             <span style={{ color: '#ccc', margin: '0 12px' }}>&gt;</span>
             <span style={{ color: '#999' }}>
-              Tìm kiếm
+              {query ? 'Tìm kiếm' : 'Tất cả bài viết'}
             </span>
           </div>
 
@@ -84,7 +80,9 @@ function SearchContent() {
               <div className="p-r-10 p-r-0-sr991">
                 {/* Search Header */}
                 <div className="how2 how2-cl2 flex-s-c m-b-30">
-                  <h3 className="f1-m-2 cl3 tab01-title">Kết quả tìm kiếm</h3>
+                  <h3 className="f1-m-2 cl3 tab01-title">
+                    {query ? 'Kết quả tìm kiếm' : 'Tất cả bài viết'}
+                  </h3>
                 </div>
 
                 {/* Search Info */}
@@ -98,7 +96,9 @@ function SearchContent() {
                         )}
                       </>
                     ) : (
-                      'Vui lòng nhập từ khóa tìm kiếm'
+                      !isLoading && (
+                        <>Tổng số: <span className="cl2">{articles.length}</span> bài viết</>
+                      )
                     )}
                   </div>
                 </div>
@@ -132,15 +132,6 @@ function SearchContent() {
                           </Link>
                         </h5>
 
-                        <p className="f1-s-1 cl8 p-b-10" style={{
-                          display: '-webkit-box',
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: 'vertical',
-                          overflow: 'hidden'
-                        }}>
-                          {article.summary}
-                        </p>
-
                         <span className="f1-s-3 cl8">
                           {formatDate(article.createdAt)}
                           {(article.category || article.subCategory) && (
@@ -158,11 +149,16 @@ function SearchContent() {
                       </div>
                     </div>
                   ))
-                ) : query ? (
+                ) : (
                   <div className="p-tb-50 text-center">
-                    <p className="f1-s-1 cl6">Không tìm thấy bài viết nào với từ khóa &quot;{query}&quot;</p>
+                    <p className="f1-s-1 cl6">
+                      {query 
+                        ? `Không tìm thấy bài viết nào với từ khóa "${query}"`
+                        : 'Chưa có bài viết nào.'
+                      }
+                    </p>
                   </div>
-                ) : null}
+                )}
               </div>
             </div>
 
@@ -173,21 +169,15 @@ function SearchContent() {
           </div>
         </div>
       </section>
-
-      <Footer />
-    </div>
+    </>
   );
 }
 
 export default function SearchPage() {
   return (
     <Suspense fallback={
-      <div className="animsition">
-        <Header />
-        <div className="container p-t-70 p-b-140 text-center">
-          <p className="f1-s-1 cl6">Đang tải...</p>
-        </div>
-        <Footer />
+      <div className="container p-t-70 p-b-140 text-center">
+        <p className="f1-s-1 cl6">Đang tải...</p>
       </div>
     }>
       <SearchContent />

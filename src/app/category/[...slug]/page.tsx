@@ -8,9 +8,10 @@ import SearchBox from '@/components/SearchBox'
 export const revalidate = 60
 
 // Generate metadata động
-export async function generateMetadata({ params }: { params: { slug: string[] } }) {
-  const category = params.slug?.[0] || ''
-  const subCategory = params.slug?.[1] || ''
+export async function generateMetadata({ params }: { params: Promise<{ slug: string[] }> }) {
+  const { slug } = await params
+  const category = slug?.[0] || ''
+  const subCategory = slug?.[1] || ''
   
   const categoryName = getCategoryName(category)
   const subCategoryName = subCategory ? getCategoryName(subCategory) : ''
@@ -25,10 +26,11 @@ export async function generateMetadata({ params }: { params: { slug: string[] } 
   }
 }
 
-export default async function CategoryPage({ params }: { params: { slug: string[] } }) {
+export default async function CategoryPage({ params }: { params: Promise<{ slug: string[] }> }) {
+  const { slug } = await params
   // Parse slug: /category/[category] hoặc /category/[category]/[subCategory]
-  const category = params.slug?.[0] || ''
-  const subCategory = params.slug?.[1] || ''
+  const category = slug?.[0] || ''
+  const subCategory = slug?.[1] || ''
   
   // Lấy tên tiếng Việt
   const categoryName = getCategoryName(category)

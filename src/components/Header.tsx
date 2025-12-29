@@ -1,175 +1,41 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
-
-interface WeatherData {
-  location: string;
-  weather: string;
-  iconSrc: string;
-  iconAlt: string;
-}
+import { useEffect, useState } from 'react';
 
 export default function Header() {
-  const [weatherData, setWeatherData] = useState<WeatherData>({
-    location: 'Đang tải vị trí...',
-    weather: 'Đang tải thời tiết...',
-    iconSrc: '/images/icons/icon-day.svg',
-    iconAlt: 'Day'
-  });
+  const [currentTime, setCurrentTime] = useState<string>('');
+  const [currentDate, setCurrentDate] = useState<string>('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const lastCoordsRef = useRef<{ lat: number; lon: number } | null>(null);
 
-  // Weather logic
+  // Current time logic
   useEffect(() => {
-    const CACHE_KEY = 'weather_cache_v1';
-    const abortController = new AbortController();
-    let cancelled = false;
-    let requestId = 0;
-
-    const safeUpdate = (updater: (prev: WeatherData) => WeatherData) => {
-      if (cancelled || abortController.signal.aborted) return;
-      setWeatherData((prev) => {
-        const next = updater(prev);
-        try {
-          const coords = lastCoordsRef.current;
-          localStorage.setItem(
-            CACHE_KEY,
-            JSON.stringify({ ts: Date.now(), data: next, coords: coords || undefined })
-          );
-        } catch {
-          // ignore cache errors
-        }
-        return next;
+    const updateDateTime = () => {
+      const now = new Date();
+      
+      // Format time: HH:MM
+      const time = now.toLocaleTimeString('vi-VN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
       });
+      
+      // Format date: Thứ X, DD/MM/YYYY
+      const dayNames = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+      const dayName = dayNames[now.getDay()];
+      const date = `${dayName}, ${now.getDate().toString().padStart(2, '0')}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getFullYear()}`;
+      
+      setCurrentTime(time);
+      setCurrentDate(date);
     };
 
-    const setLocation = (location: string) => {
-      if (!location) return;
-      safeUpdate((prev) => ({ ...prev, location }));
-    };
+    // Update immediately
+    updateDateTime();
+    
+    // Update every second
+    const interval = setInterval(updateDateTime, 1000);
 
-    const setWeather = (temp: number, isDay: boolean) => {
-      safeUpdate((prev) => ({
-        ...prev,
-        weather: `HI ${temp}° LO ${temp - 3}°`,
-        iconSrc: isDay ? '/images/icons/icon-day.svg' : '/images/icons/icon-night.png',
-        iconAlt: isDay ? 'Day' : 'Night',
-      }));
-    };
-
-    const loadCache = () => {
-      try {
-        const raw = localStorage.getItem(CACHE_KEY);
-        if (!raw) return null;
-        const parsed = JSON.parse(raw) as {
-          ts?: number;
-          data?: WeatherData;
-          coords?: { lat: number; lon: number };
-        };
-        if (parsed?.data) return parsed;
-      } catch {
-        // ignore cache parse errors
-      }
-      return null;
-    };
-
-    const updateFromCoords = async (lat: number, lon: number, locationHint?: string) => {
-      lastCoordsRef.current = { lat, lon };
-      const myRequestId = ++requestId;
-
-      if (locationHint) setLocation(locationHint);
-
-      const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=celsius`;
-      const geoUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
-
-      // Fetch weather first (fast), then location (can be slower)
-      const weatherPromise = fetch(weatherUrl, { signal: abortController.signal })
-        .then((r) => (r.ok ? r.json() : null))
-        .catch(() => null);
-
-      const geoPromise = fetch(geoUrl, { signal: abortController.signal })
-        .then((r) => (r.ok ? r.json() : null))
-        .catch(() => null);
-
-      const weatherResult = await weatherPromise;
-      if (cancelled || abortController.signal.aborted || myRequestId !== requestId) return;
-
-      if (weatherResult?.current_weather) {
-        const temp = Math.round(weatherResult.current_weather.temperature);
-        const isDay = weatherResult.current_weather.is_day === 1;
-        setWeather(temp, isDay);
-      }
-
-      // Update location without blocking weather rendering
-      geoPromise.then((geoData) => {
-        if (cancelled || abortController.signal.aborted || myRequestId !== requestId) return;
-
-        const address = geoData?.address;
-        if (address) {
-          const city = address.city || address.town || address.village || address.state || 'Unknown';
-          const country = String(address.country_code || '').toUpperCase();
-          const locationText = country ? `${city}, ${country}` : city;
-          if (locationText && locationText !== 'Unknown') setLocation(locationText);
-        }
-      });
-    };
-
-    // 1) Instant render from cache (if any)
-    const cached = loadCache();
-    if (cached?.data) {
-      setWeatherData(cached.data);
-      if (cached.coords) lastCoordsRef.current = cached.coords;
-    }
-
-    // 2) Refresh using cached coords (no permission prompt)
-    if (cached?.coords) {
-      updateFromCoords(cached.coords.lat, cached.coords.lon, cached.data?.location);
-    }
-
-    // 3) Try geolocation
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          updateFromCoords(position.coords.latitude, position.coords.longitude);
-        },
-        () => {
-          // ignore (IP/cached fallback will handle)
-        },
-        {
-          enableHighAccuracy: false,
-          maximumAge: 10 * 60 * 1000, // allow cached position for faster result
-          timeout: 2500, // quick timeout so UI doesn't wait too long
-        }
-      );
-    }
-
-    // 5) Final fallback: Hanoi (only if we still have nothing shortly after mount)
-    const hanoiTimeout = window.setTimeout(() => {
-      if (!lastCoordsRef.current) {
-        updateFromCoords(21.0285, 105.8542, 'Hà Nội, VN');
-      }
-    }, 1200);
-
-    // Refresh periodically (reuse last coords if available)
-    const interval = window.setInterval(() => {
-      const coords = lastCoordsRef.current;
-      if (coords) {
-        updateFromCoords(coords.lat, coords.lon);
-      } else {
-        fetchIpLocation().then((ip) => {
-          if (!ip || cancelled || abortController.signal.aborted) return;
-          updateFromCoords(ip.lat, ip.lon, ip.hint);
-        });
-      }
-    }, 30 * 60 * 1000);
-
-    return () => {
-      cancelled = true;
-      abortController.abort();
-      window.clearTimeout(hanoiTimeout);
-      window.clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, []);
 
   const toggleMobileMenu = () => {
@@ -183,24 +49,31 @@ export default function Header() {
         <div className="topbar">
           <div className="content-topbar container h-100">
             <div className="left-topbar">
-              <span className="left-topbar-item flex-wr-s-c">
-                <span className="left-topbar-item" id="location">
-                  <span>{weatherData.location}</span>
-                </span>
-                <img className="m-b-1" src={weatherData.iconSrc} alt={weatherData.iconAlt} id="weather-icon" style={{ width: '12px', height: '12px', marginLeft: '4px', marginRight: '4px', marginBottom: '4px' }} />
-                <span id="weather">
-                  <span>{weatherData.weather}</span>
-                </span>
+              <span className="left-topbar-item">Hà Nội, VN</span>
+              <span className="left-topbar-item">
+                <i className="fa fa-calendar-alt" style={{ marginRight: '6px', fontSize: '11px' }}></i>
+                {currentDate}
               </span>
-
-                  <a href="#" className="left-topbar-item">Về chúng tôi</a>
-                  <Link href="/contact" className="left-topbar-item">Liên hệ</Link>
+              <span className="left-topbar-item">
+                <i className="fa fa-clock" style={{ marginRight: '6px', fontSize: '11px' }}></i>
+                <span style={{ fontFamily: 'monospace' }}>{currentTime}</span>
+              </span>
+              <a href="#" className="left-topbar-item">Về chúng tôi</a>
+              <Link href="/contact" className="left-topbar-item">Liên hệ</Link>
             </div>
 
             <div className="right-topbar">
-              <a href="https://www.facebook.com/"><span className="fab fa-facebook-f"></span></a>
-              <a href="https://twitter.com/"><span className="fab fa-twitter"></span></a>
-              <a href="https://www.youtube.com/"><span className="fab fa-youtube"></span></a>
+              <a href="https://www.tiktok.com/" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '20px', height: '20px' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                </svg>
+              </a>
+              <a href="https://www.facebook.com/" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '20px', height: '20px' }}>
+                <span className="fab fa-facebook-f"></span>
+              </a>
+              <a href="https://www.youtube.com/" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '20px', height: '20px' }}>
+                <span className="fab fa-youtube"></span>
+              </a>
             </div>
           </div>
         </div>
@@ -241,14 +114,14 @@ export default function Header() {
         <div className="menu-mobile" style={{ display: mobileMenuOpen ? 'block' : 'none' }}>
           <ul className="topbar-mobile">
             <li className="left-topbar">
-              <span className="left-topbar-item flex-wr-s-c">
-                <span className="left-topbar-item" id="location-mobile">
-                  <span>{weatherData.location}</span>
-                </span>
-                <img className="m-b-1" src={weatherData.iconSrc} alt={weatherData.iconAlt} id="weather-icon-mobile" style={{ width: '12px', height: '12px', marginLeft: '4px', marginRight: '4px', marginBottom: '4px' }} />
-                <span id="weather-mobile">
-                  <span>{weatherData.weather}</span>
-                </span>
+              <span className="left-topbar-item">Hà Nội, VN</span>
+              <span className="left-topbar-item">
+                <i className="fa fa-calendar-alt" style={{ marginRight: '6px', fontSize: '11px' }}></i>
+                {currentDate}
+              </span>
+              <span className="left-topbar-item">
+                <i className="fa fa-clock" style={{ marginRight: '6px', fontSize: '11px' }}></i>
+                <span style={{ fontFamily: 'monospace' }}>{currentTime}</span>
               </span>
             </li>
 
@@ -257,10 +130,18 @@ export default function Header() {
                   <Link href="/contact" className="left-topbar-item">Liên hệ</Link>
             </li>
 
-            <li className="right-topbar">
-              <a href="#"><span className="fab fa-facebook-f"></span></a>
-              <a href="#"><span className="fab fa-twitter"></span></a>
-              <a href="#"><span className="fab fa-youtube"></span></a>
+            <li className="left-topbar">
+              <a href="https://www.tiktok.com/" className="left-topbar-item" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '20px', height: '20px', padding: '0 8px' }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ width: '18px', height: '18px', flexShrink: 0 }}>
+                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                </svg>
+              </a>
+              <a href="https://www.facebook.com/" className="left-topbar-item" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '20px', height: '20px', padding: '0 8px' }}>
+                <span className="fab fa-facebook-f" style={{ fontSize: '18px' }}></span>
+              </a>
+              <a href="https://www.youtube.com/" className="left-topbar-item" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '20px', height: '20px', padding: '0 8px' }}>
+                <span className="fab fa-youtube" style={{ fontSize: '18px' }}></span>
+              </a>
             </li>
           </ul>
 

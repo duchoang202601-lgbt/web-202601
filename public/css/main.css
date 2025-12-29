@@ -868,7 +868,7 @@ li.respon-sub-menu > .sub-menu .sub-menu {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 10px;
+    padding: 8px 10px 8px 5px;
     gap: 8px;
     background-color: #fff;
     border-bottom: 1px solid #e5e5e5;
@@ -880,23 +880,35 @@ li.respon-sub-menu > .sub-menu .sub-menu {
     display: flex !important;
     flex-direction: row;
     align-items: center;
+    justify-content: flex-start;
     gap: 10px;
     flex: 1;
     min-width: 0;
     overflow: hidden;
+    margin-left: 0;
+    padding-left: 0;
+  }
+  
+  .wrap-header-mobile .logo-mobile-container {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
   }
 
   .logo-mobile {
-    flex-shrink: 0;
-    width: auto;
-    height: auto;
-    min-width: 60px;
-    max-width: 70px;
-    min-height: 60px;
-    max-height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-shrink: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    min-width: 60px !important;
+    max-width: 70px !important;
+    min-height: 60px !important;
+    max-height: 70px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    flex-grow: 0 !important;
+    position: relative !important;
   }
 
   .logo-mobile a {
@@ -904,7 +916,7 @@ li.respon-sub-menu > .sub-menu .sub-menu {
     height: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .logo-mobile img {
@@ -913,6 +925,11 @@ li.respon-sub-menu > .sub-menu .sub-menu {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    position: relative !important;
+    left: 0 !important;
+    top: auto !important;
+    bottom: auto !important;
+    margin: 0 !important;
   }
 
   .banner-header-mobile {
@@ -1067,6 +1084,10 @@ li.respon-sub-menu > .sub-menu .sub-menu {
     padding: 0 8px;
     line-height: 1.5;
     white-space: nowrap;
+  }
+  
+  .topbar-mobile .left-topbar a.left-topbar-item::before {
+    display: none;
   }
 
   .topbar-mobile #location,

@@ -43,25 +43,28 @@ export default function Footer() {
                     </p>
                   </div>
                   
-                  <div className="f1-s-1 cl11 p-t-10" style={{ lineHeight: 1.8 }}>
-                    <p className="p-b-5">
+                  <div className="f1-s-1 cl11 p-t-10" style={{ lineHeight: 1.8, display: 'flex', flexWrap: 'wrap', gap: '15px', alignItems: 'center' }}>
+                    <span>
                       <i className="fas fa-map-marker-alt m-r-5"></i>
                       <strong>Địa chỉ:</strong> Tầng 2 số 162 Khuất Duy Tiến, phường Nhân Chính, quận Thanh Xuân, Hà Nội
-                    </p>
-                    <p className="p-b-5">
+                    </span>
+                    <span>
                       <i className="fas fa-phone m-r-5"></i>
-                      <strong>Điện thoại:</strong> 0123456789 - <strong>Email:</strong> ..............@gmail.com
-                    </p>
-                    <p className="p-b-5">
+                      <strong>Điện thoại:</strong> 0123456789
+                    </span>
+                    <span>
+                      <strong>Email:</strong> ..............@gmail.com
+                    </span>
+                    <span>
                       <i className="fas fa-globe m-r-5"></i>
                       <strong>Website:</strong> Xxxxxxxxxxxxxxx.vn
-                    </p>
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
             
-            {/* Phần bên phải: Liên hệ, mạng xã hội, thống kê */}
+            {/* Phần bên phải: Liên hệ, mạng xã hội */}
             <div className="col-lg-4 p-b-20">
               {/* Box Liên hệ phát hành và quảng cáo */}
               <div className="p-b-20" style={{ backgroundColor: '#17b978', padding: '15px', borderRadius: '5px', marginBottom: '20px' }}>
@@ -85,15 +88,17 @@ export default function Footer() {
                 <h4 className="f1-m-7 cl0 p-b-10" style={{ fontSize: '16px', fontWeight: 'bold' }}>
                   THEO DÕI CHÚNG TÔI
                 </h4>
-                <div className="p-t-10">
-                  <a href="https://www.facebook.com/" className="fs-18 cl11 hov-cl10 trans-03 m-r-8" style={{ color: '#17b978', fontSize: '24px' }}>
-                    <span className="fab fa-facebook-f"></span>
+                <div className="p-t-10" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <a href="https://www.tiktok.com/" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '24px', height: '24px', color: '#17b978' }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                    </svg>
                   </a>
-                  <a href="https://twitter.com/" className="fs-18 cl11 hov-cl10 trans-03 m-r-8" style={{ color: '#17b978', fontSize: '24px' }}>
-                    <span className="fab fa-twitter"></span>
+                  <a href="https://www.facebook.com/" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '24px', height: '24px', color: '#17b978' }}>
+                    <span className="fab fa-facebook-f" style={{ fontSize: '24px' }}></span>
                   </a>
-                  <a href="https://www.youtube.com/" className="fs-18 cl11 hov-cl10 trans-03 m-r-8" style={{ color: '#17b978', fontSize: '24px' }}>
-                    <span className="fab fa-youtube"></span>
+                  <a href="https://www.youtube.com/" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '24px', height: '24px', color: '#17b978' }}>
+                    <span className="fab fa-youtube" style={{ fontSize: '24px' }}></span>
                   </a>
                 </div>
               </div>
@@ -106,7 +111,7 @@ export default function Footer() {
       <div className="bg11">
         <div className="container size-h-4 flex-c-c p-tb-15">
           <span className="f1-s-1 cl0 txt-center">
-            © {new Date().getFullYear()} Bản quyền thuộc VIỆN PHÁT TRIỂN VĂN HÓA VÀ CHĂM SÓC SỨC KHỎE CỘNG ĐỒNG. Thiết kế website – Duke
+            © {new Date().getFullYear()} Bản quyền thuộc VIỆN PHÁT TRIỂN VĂN HÓA VÀ CHĂM SÓC SỨC KHỎE CỘNG ĐỒNG. Thiết kế website – Team Đ&H
           </span>
         </div>
       </div>

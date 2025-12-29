@@ -109,7 +109,7 @@ export default function ArticleSidebar() {
                     marginLeft: '15px',
                     lineHeight: '1.5',
                     display: '-webkit-box',
-                    WebkitLineClamp: 2,
+                    WebkitLineClamp: 3,
                     WebkitBoxOrient: 'vertical',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis'

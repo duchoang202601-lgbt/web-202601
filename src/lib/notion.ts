@@ -1,4 +1,4 @@
-import { Client } from '@notionhq/client';
+import { Client, LogLevel } from '@notionhq/client';
 
 if (!process.env.NOTION_API_KEY) {
   throw new Error('NOTION_API_KEY is not set in environment variables');
@@ -10,7 +10,6 @@ if (!process.env.NOTION_DATABASE_ARTICLES_ID) {
 
 const notion = new Client({
   auth: process.env.NOTION_API_KEY,
-  logLevel: 'error', // Chỉ log lỗi, không log requests
 });
 
 // Format database ID (remove dashes if present, Notion accepts both formats)
