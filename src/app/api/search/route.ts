@@ -47,22 +47,107 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const query = searchParams.get('q') || '';
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const limit = parseInt(searchParams.get('limit') || '10', 10);
     
     if (!query.trim()) {
-      return NextResponse.json([]);
+      // If no query, return all articles with pagination
+      let allItems: any[] = [];
+      let cursor: string | undefined = undefined;
+      let hasMore = true;
+      const maxFetch = 1000; // Limit total fetch to prevent timeout
+
+      // Fetch all articles
+      while (hasMore && allItems.length < maxFetch) {
+        const result = await getNotionArticles({
+          limit: 100, // Fetch in batches of 100
+          cursor,
+        });
+
+        allItems = [...allItems, ...result.items];
+        cursor = result.nextCursor || undefined;
+        hasMore = result.hasMore;
+
+        if (result.items.length < 100) {
+          hasMore = false;
+        }
+      }
+
+      // Calculate pagination
+      const totalItems = allItems.length;
+      const totalPages = Math.ceil(totalItems / limit);
+      const startIndex = (page - 1) * limit;
+      const endIndex = startIndex + limit;
+      const paginatedItems = allItems.slice(startIndex, endIndex);
+
+      return NextResponse.json({
+        items: paginatedItems,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          totalItems,
+          limit,
+          hasMore: page < totalPages,
+        },
+      });
     }
 
-    // Get all articles (limit to 100 for performance)
-    const { items: allArticles } = await getNotionArticles({ limit: 100 });
+    // Get all articles for search (fetch more for better search results)
+    let allItems: any[] = [];
+    let cursor: string | undefined = undefined;
+    let hasMore = true;
+    const maxFetch = 1000; // Limit total fetch to prevent timeout
+
+    // Fetch all articles
+    while (hasMore && allItems.length < maxFetch) {
+      const result = await getNotionArticles({
+        limit: 100, // Fetch in batches of 100
+        cursor,
+      });
+
+      allItems = [...allItems, ...result.items];
+      cursor = result.nextCursor || undefined;
+      hasMore = result.hasMore;
+
+      if (result.items.length < 100) {
+        hasMore = false;
+      }
+    }
     
     // Filter articles by title using multiple search strategies
-    const filteredArticles = allArticles.filter(article => 
+    const filteredArticles = allItems.filter(article => 
       matchesSearch(article.title, query.trim())
     );
 
-    return NextResponse.json(filteredArticles);
-  } catch {
-    return NextResponse.json([]);
+    // Calculate pagination for filtered results
+    const totalItems = filteredArticles.length;
+    const totalPages = Math.ceil(totalItems / limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedItems = filteredArticles.slice(startIndex, endIndex);
+
+    return NextResponse.json({
+      items: paginatedItems,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems,
+        limit,
+        hasMore: page < totalPages,
+      },
+    });
+  } catch (error) {
+    console.error('Error in search API:', error);
+    return NextResponse.json({
+      items: [],
+      pagination: {
+        currentPage: 1,
+        totalPages: 0,
+        totalItems: 0,
+        limit: 10,
+        hasMore: false,
+      },
+    });
   }
 }
 

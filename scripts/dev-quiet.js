@@ -1,8 +1,12 @@
 const { spawn } = require('child_process');
 
+// Suppress Node.js deprecation warnings
+const nodeOptions = (process.env.NODE_OPTIONS || '') + ' --no-deprecation';
+
 const next = spawn('npx', ['next', 'dev'], {
   stdio: ['inherit', 'pipe', 'pipe'],
-  shell: true
+  shell: true,
+  env: { ...process.env, NODE_OPTIONS: nodeOptions.trim() }
 });
 
 // Các pattern cần lọc bỏ
@@ -13,7 +17,9 @@ const filterPatterns = [
   /^DELETE\s/,
   /^PATCH\s/,
   /Compiled\s/,
-  /^\s*$/
+  /^\s*$/,
+  /DeprecationWarning/,
+  /url\.parse\(\)/
 ];
 
 function shouldShow(line) {
@@ -44,8 +50,13 @@ next.stdout.on('data', (data) => {
 });
 
 next.stderr.on('data', (data) => {
-  // Luôn hiển thị stderr (errors)
-  console.error(data.toString());
+  const output = data.toString();
+  // Lọc bỏ deprecation warnings
+  if (output.includes('DeprecationWarning') || output.includes('url.parse()')) {
+    return; // Không hiển thị deprecation warnings
+  }
+  // Hiển thị các lỗi khác
+  console.error(output);
 });
 
 next.on('close', (code) => {

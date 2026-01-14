@@ -10,7 +10,7 @@ import LoadingIndicator from '@/components/LoadingIndicator';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Viện văn hóa và chăm sóc sức khỏe cộng đồng',
+  title: 'Nhân tài nhân lực văn hóa sức khỏe cộng đồng',
   description: 'Trang thông tin điện tử - Nhân tài nhân lực văn hóa sức khỏe cộng đồng',
   icons: {
     icon: '/images/icons/favicon.png',
